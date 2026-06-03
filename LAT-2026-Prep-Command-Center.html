@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LAT 2026 — Command Center · June 21 Sprint</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,900;1,9..144,500&family=Spectral:wght@300;400;500;600&family=JetBrains+Mono:wght@400;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0d1320;          /* deepest background */
+    --ink-2:#141d31;        /* panel */
+    --ink-3:#1c2740;        /* raised */
+    --line:#2a3854;
+    --gold:#e8b042;         /* primary accent */
+    --gold-soft:#f4d489;
+    --teal:#4ec5b0;         /* secondary accent */
+    --rose:#e8746b;         /* alert / countdown */
+    --parchment:#ece3d0;    /* main text */
+    --muted:#8c9bb5;        /* secondary text */
+    --green:#6fcf8f;
+    --display:'Fraunces',serif;
+    --body:'Spectral',Georgia,serif;
+    --mono:'JetBrains Mono',monospace;
+    --urdu:'Noto Nastaliq Urdu',serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:
+      radial-gradient(circle at 12% 8%, rgba(232,176,66,.07), transparent 38%),
+      radial-gradient(circle at 88% 92%, rgba(78,197,176,.06), transparent 40%),
+      var(--ink);
+    color:var(--parchment);
+    font-family:var(--body);
+    line-height:1.6;
+    font-size:17px;
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--gold);color:var(--ink)}
+  a{color:var(--gold);text-decoration:none;border-bottom:1px solid rgba(232,176,66,.3);transition:.2s}
+  a:hover{color:var(--gold-soft);border-color:var(--gold)}
+
+  /* ---------- HEADER ---------- */
+  header{
+    padding:34px 22px 22px;
+    text-align:center;
+    border-bottom:1px solid var(--line);
+    background:linear-gradient(180deg,rgba(20,29,49,.6),transparent);
+    position:relative;
+  }
+  .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.32em;text-transform:uppercase;color:var(--teal)}
+  h1{font-family:var(--display);font-weight:900;font-size:clamp(2.1rem,6vw,3.6rem);line-height:1.02;letter-spacing:-.02em;margin:8px 0 4px}
+  h1 .accent{color:var(--gold);font-style:italic;font-weight:500}
+  .subhead{color:var(--muted);font-size:.95rem;max-width:640px;margin:6px auto 0}
+
+  /* ---------- COUNTDOWN ---------- */
+  .countdown{
+    display:flex;justify-content:center;gap:10px;flex-wrap:wrap;
+    margin:22px auto 4px;max-width:560px;
+  }
+  .cd-box{
+    background:var(--ink-2);border:1px solid var(--line);border-radius:12px;
+    padding:12px 8px;min-width:78px;flex:1;position:relative;overflow:hidden;
+  }
+  .cd-box::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gold),var(--rose))}
+  .cd-num{font-family:var(--mono);font-size:clamp(1.6rem,5vw,2.2rem);font-weight:700;color:var(--gold)}
+  .cd-lab{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-top:2px}
+  .cd-note{font-family:var(--mono);font-size:11px;color:var(--rose);letter-spacing:.1em;margin-top:8px}
+
+  /* overall progress */
+  .progwrap{max-width:560px;margin:16px auto 0;text-align:left}
+  .progwrap .plabel{display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+  .progbar{height:8px;background:var(--ink-3);border-radius:99px;overflow:hidden;border:1px solid var(--line)}
+  .progfill{height:100%;width:0;background:linear-gradient(90deg,var(--teal),var(--gold));transition:width .5s ease}
+
+  /* ---------- TABS ---------- */
+  nav.tabs{
+    position:sticky;top:0;z-index:50;
+    display:flex;gap:4px;overflow-x:auto;padding:10px 14px;
+    background:rgba(13,19,32,.92);backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);scrollbar-width:none;
+  }
+  nav.tabs::-webkit-scrollbar{display:none}
+  .tab-btn{
+    font-family:var(--mono);font-size:13px;letter-spacing:.06em;
+    color:var(--muted);background:transparent;border:1px solid transparent;
+    padding:9px 15px;border-radius:9px;cursor:pointer;white-space:nowrap;transition:.18s;
+  }
+  .tab-btn:hover{color:var(--parchment);background:var(--ink-2)}
+  .tab-btn.active{color:var(--ink);background:var(--gold);font-weight:700}
+
+  /* ---------- LAYOUT ---------- */
+  main{max-width:920px;margin:0 auto;padding:30px 20px 90px}
+  .panel{display:none;animation:fade .4s ease}
+  .panel.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+  h2.sec{font-family:var(--display);font-weight:600;font-size:clamp(1.5rem,4vw,2.1rem);letter-spacing:-.01em;margin:6px 0 4px}
+  h2.sec .n{font-family:var(--mono);font-size:.8rem;color:var(--teal);vertical-align:super;margin-right:8px}
+  .sec-intro{color:var(--muted);margin-bottom:24px;font-size:.98rem}
+  h3.blk{font-family:var(--display);font-weight:600;font-size:1.25rem;color:var(--gold-soft);margin:30px 0 12px;display:flex;align-items:center;gap:10px}
+  h3.blk::before{content:"";width:22px;height:2px;background:var(--gold);display:inline-block}
+
+  .card{background:var(--ink-2);border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin-bottom:16px}
+  .card.glow{border-color:rgba(232,176,66,.4);box-shadow:0 0 0 1px rgba(232,176,66,.08), 0 14px 40px -20px rgba(232,176,66,.3)}
+
+  /* score map */
+  .scoremap{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin:8px 0 6px}
+  .sm-cell{background:var(--ink-3);border:1px solid var(--line);border-radius:11px;padding:13px 14px;position:relative}
+  .sm-cell .subj{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+  .sm-cell .tgt{font-family:var(--display);font-size:1.7rem;font-weight:700;color:var(--gold);margin-top:2px}
+  .sm-cell .tgt small{font-size:.9rem;color:var(--muted);font-weight:400}
+  .sm-cell .bar{height:5px;background:var(--ink);border-radius:9px;margin-top:9px;overflow:hidden}
+  .sm-cell .bar i{display:block;height:100%;background:linear-gradient(90deg,var(--teal),var(--gold))}
+  .sm-cell .roi{font-family:var(--mono);font-size:10px;margin-top:8px;letter-spacing:.05em}
+  .roi.hi{color:var(--green)} .roi.md{color:var(--gold)} .roi.lo{color:var(--rose)}
+
+  /* priority ranking */
+  ol.rank{list-style:none;counter-reset:r}
+  ol.rank li{counter-increment:r;background:var(--ink-2);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:10px;padding:13px 16px 13px 52px;margin-bottom:9px;position:relative}
+  ol.rank li::before{content:counter(r);position:absolute;left:14px;top:50%;transform:translateY(-50%);font-family:var(--display);font-weight:900;font-size:1.5rem;color:var(--gold)}
+  ol.rank li b{color:var(--parchment)} ol.rank li span{color:var(--muted);font-size:.92rem}
+
+  /* checkbox rows */
+  .chk{display:flex;align-items:flex-start;gap:11px;padding:9px 4px;border-bottom:1px dashed var(--line);cursor:pointer;user-select:none}
+  .chk:last-child{border-bottom:none}
+  .chk input{appearance:none;-webkit-appearance:none;min-width:20px;height:20px;border:2px solid var(--line);border-radius:6px;margin-top:3px;cursor:pointer;position:relative;transition:.15s;background:var(--ink)}
+  .chk input:checked{background:var(--gold);border-color:var(--gold)}
+  .chk input:checked::after{content:"✓";position:absolute;color:var(--ink);font-weight:900;font-size:13px;top:-1px;left:3px}
+  .chk input:checked ~ .chk-txt{color:var(--muted);text-decoration:line-through;text-decoration-color:rgba(140,155,181,.5)}
+  .chk-txt{flex:1;transition:.15s}
+  .chk-txt small{display:block;color:var(--muted);font-size:.82rem;text-decoration:none}
+
+  /* day plan */
+  .week-head{font-family:var(--mono);font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--teal);margin:26px 0 4px}
+  .week-head span{color:var(--muted)}
+  .day{display:grid;grid-template-columns:64px 1fr;gap:0;background:var(--ink-2);border:1px solid var(--line);border-radius:12px;margin-bottom:10px;overflow:hidden}
+  .day .d-tag{background:var(--ink-3);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:12px 4px;border-right:1px solid var(--line)}
+  .day .d-tag .dd{font-family:var(--display);font-weight:900;font-size:1.5rem;color:var(--gold);line-height:1}
+  .day .d-tag .dm{font-family:var(--mono);font-size:9px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;margin-top:3px}
+  .day .d-body{padding:12px 16px}
+  .day .d-focus{font-family:var(--display);font-weight:600;color:var(--gold-soft);font-size:1.02rem;margin-bottom:3px}
+  .day .d-body ul{list-style:none}
+  .day .d-body li{font-size:.92rem;color:var(--parchment);padding-left:16px;position:relative;margin:3px 0}
+  .day .d-body li::before{content:"▸";position:absolute;left:0;color:var(--teal)}
+  .day.exam{border-color:var(--rose);background:linear-gradient(135deg,rgba(232,116,107,.12),var(--ink-2))}
+  .day.exam .dd{color:var(--rose)}
+
+  /* essay / template blocks */
+  .template{background:var(--ink-3);border:1px dashed var(--line);border-radius:10px;padding:16px 18px;font-size:.95rem}
+  .template .ph{color:var(--gold);font-weight:600;background:rgba(232,176,66,.12);padding:0 5px;border-radius:4px}
+  .template p{margin:10px 0}
+  .step{display:flex;gap:12px;margin:10px 0}
+  .step .num{min-width:30px;height:30px;border-radius:50%;background:var(--gold);color:var(--ink);font-family:var(--display);font-weight:900;display:flex;align-items:center;justify-content:center;font-size:.95rem}
+  .step .stxt b{color:var(--gold-soft)}
+  .example{border-left:3px solid var(--teal);padding:4px 0 4px 16px;margin:14px 0;color:var(--parchment);font-style:italic;font-size:.96rem}
+  .pill-row{display:flex;flex-wrap:wrap;gap:7px;margin:10px 0}
+  .pill{font-family:var(--mono);font-size:12px;background:var(--ink-3);border:1px solid var(--line);color:var(--parchment);padding:5px 11px;border-radius:99px}
+  .pill.hot{border-color:var(--rose);color:var(--rose)}
+  .note{background:rgba(78,197,176,.08);border:1px solid rgba(78,197,176,.3);border-radius:10px;padding:12px 15px;font-size:.9rem;color:var(--parchment);margin:14px 0}
+  .note b{color:var(--teal)}
+  .warn{background:rgba(232,116,107,.09);border:1px solid rgba(232,116,107,.3);border-radius:10px;padding:12px 15px;font-size:.9rem;margin:14px 0}
+  .warn b{color:var(--rose)}
+
+  /* MCQ */
+  .mcq{background:var(--ink-2);border:1px solid var(--line);border-radius:11px;margin-bottom:10px;overflow:hidden}
+  .mcq-q{padding:14px 16px;cursor:pointer;display:flex;justify-content:space-between;gap:12px;align-items:flex-start;transition:.15s}
+  .mcq-q:hover{background:var(--ink-3)}
+  .mcq-q .qt{flex:1;font-size:.97rem}
+  .mcq-q .qt b{color:var(--teal);font-family:var(--mono);font-size:.8rem;margin-right:7px}
+  .mcq-q .tap{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;white-space:nowrap;border:1px solid var(--line);padding:4px 8px;border-radius:7px;transition:.15s}
+  .mcq.open .tap{background:var(--gold);color:var(--ink);border-color:var(--gold)}
+  .mcq-a{max-height:0;overflow:hidden;transition:max-height .3s ease;background:var(--ink-3);border-top:0 solid var(--line)}
+  .mcq.open .mcq-a{max-height:200px;border-top:1px solid var(--line)}
+  .mcq-a .inner{padding:13px 16px;font-size:.94rem}
+  .mcq-a .ans{color:var(--green);font-weight:600}
+  .mcq-a .why{color:var(--muted);font-size:.86rem;margin-top:4px}
+  .subj-filter{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:18px}
+  .fbtn{font-family:var(--mono);font-size:12px;padding:7px 13px;border-radius:8px;border:1px solid var(--line);background:var(--ink-2);color:var(--muted);cursor:pointer;transition:.15s}
+  .fbtn:hover{color:var(--parchment)}
+  .fbtn.on{background:var(--teal);color:var(--ink);border-color:var(--teal);font-weight:700}
+
+  /* tables */
+  .tbl{width:100%;border-collapse:collapse;font-size:.92rem;margin:8px 0}
+  .tbl th{text-align:left;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--teal);padding:9px 10px;border-bottom:1px solid var(--line)}
+  .tbl td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .tbl tr:hover td{background:var(--ink-2)}
+  .tbl td b{color:var(--gold-soft)}
+  .two-col{columns:2;column-gap:26px}
+  @media(max-width:560px){.two-col{columns:1}}
+
+  /* urdu */
+  .urdu{font-family:var(--urdu);direction:rtl;font-size:1.35rem;line-height:2.4;color:var(--gold-soft)}
+  .muh{display:grid;grid-template-columns:1fr;gap:0;background:var(--ink-2);border:1px solid var(--line);border-radius:11px;overflow:hidden;margin-bottom:9px}
+  .muh-row{display:flex;justify-content:space-between;gap:14px;padding:11px 16px;align-items:center}
+  .muh-row .ur{font-family:var(--urdu);direction:rtl;font-size:1.3rem;color:var(--gold-soft);text-align:right;flex:1;line-height:2.2}
+  .muh-row .mn{font-size:.88rem;color:var(--muted);text-align:left;max-width:46%}
+  .muh-row .mn .rom{color:var(--teal);font-family:var(--mono);font-size:.72rem;display:block;letter-spacing:.04em}
+
+  /* resources */
+  .res-group{margin-bottom:8px}
+  .res-list{list-style:none}
+  .res-list li{padding:10px 0;border-bottom:1px dashed var(--line);display:flex;flex-direction:column;gap:2px}
+  .res-list li:last-child{border-bottom:none}
+  .res-list .rt{font-size:.96rem}
+  .res-list .rd{color:var(--muted);font-size:.82rem}
+  .badge{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;padding:2px 7px;border-radius:5px;margin-left:7px;vertical-align:middle}
+  .badge.off{background:rgba(111,207,143,.16);color:var(--green);border:1px solid rgba(111,207,143,.4)}
+  .badge.free{background:rgba(78,197,176,.14);color:var(--teal);border:1px solid rgba(78,197,176,.35)}
+
+  footer{text-align:center;padding:28px 20px;color:var(--muted);font-family:var(--mono);font-size:11px;letter-spacing:.1em;border-top:1px solid var(--line)}
+  .reset{background:none;border:1px solid var(--line);color:var(--muted);font-family:var(--mono);font-size:11px;padding:6px 12px;border-radius:7px;cursor:pointer;margin-top:14px}
+  .reset:hover{border-color:var(--rose);color:var(--rose)}
+  @media(max-width:560px){body{font-size:16px}.sm-cell .tgt{font-size:1.4rem}.muh-row .ur{font-size:1.15rem}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">HEC Law Admission Test · LAT-3 · 2026</div>
+  <h1>Command <span class="accent">Center</span></h1>
+  <p class="subhead">A focused 19-day sprint to <b>90%+</b> — engineered around the official HEC weightages, frequency-ranked content, and exam-day mechanics. Built for a logical mind that wants leverage, not 500 pages.</p>
+
+  <div class="countdown" id="countdown">
+    <div class="cd-box"><div class="cd-num" id="cd-d">--</div><div class="cd-lab">Days</div></div>
+    <div class="cd-box"><div class="cd-num" id="cd-h">--</div><div class="cd-lab">Hours</div></div>
+    <div class="cd-box"><div class="cd-num" id="cd-m">--</div><div class="cd-lab">Minutes</div></div>
+    <div class="cd-box"><div class="cd-num" id="cd-s">--</div><div class="cd-lab">Seconds</div></div>
+  </div>
+  <div class="cd-note" id="cd-note">▸ Target: Sunday, 21 June 2026 — exam morning</div>
+
+  <div class="progwrap">
+    <div class="plabel"><span>Overall preparation progress</span><span id="prog-pct">0%</span></div>
+    <div class="progbar"><div class="progfill" id="prog-fill"></div></div>
+  </div>
+</header>
+
+<nav class="tabs" id="tabs">
+  <button class="tab-btn active" data-t="plan">◆ Study Plan</button>
+  <button class="tab-btn" data-t="essays">✎ Essays + PS</button>
+  <button class="tab-btn" data-t="mcq">⊞ MCQ Bank</button>
+  <button class="tab-btn" data-t="english">A English</button>
+  <button class="tab-btn" data-t="urdu">ا Urdu</button>
+  <button class="tab-btn" data-t="resources">⚲ Resources</button>
+</nav>
+
+<main>
+
+<!-- ============ STUDY PLAN ============ -->
+<section class="panel active" id="plan">
+  <h2 class="sec"><span class="n">01</span>The Strategy</h2>
+  <p class="sec-intro">100 marks. 50 passes; <b>70+</b> gets you into Punjab University merit; <b>90+</b> is the target here. The whole paper is basic-level — your edge is that almost everything is <i>predictable and memorizable</i>. No surprises if you map the marks first.</p>
+
+  <h3 class="blk">Your Score Map — where the 90 comes from</h3>
+  <div class="scoremap">
+    <div class="sm-cell"><div class="subj">Math</div><div class="tgt">5<small>/5</small></div><div class="bar"><i style="width:100%"></i></div><div class="roi hi">▲ Free marks — CS grad</div></div>
+    <div class="sm-cell"><div class="subj">English</div><div class="tgt">18<small>/20</small></div><div class="bar"><i style="width:90%"></i></div><div class="roi hi">▲ Highest weight MCQ</div></div>
+    <div class="sm-cell"><div class="subj">Gen. Knowledge</div><div class="tgt">18<small>/20</small></div><div class="bar"><i style="width:90%"></i></div><div class="roi hi">▲ Pure memory, high yield</div></div>
+    <div class="sm-cell"><div class="subj">Islamiat</div><div class="tgt">9<small>/10</small></div><div class="bar"><i style="width:90%"></i></div><div class="roi md">● Same facts repeat</div></div>
+    <div class="sm-cell"><div class="subj">Pak Studies</div><div class="tgt">9<small>/10</small></div><div class="bar"><i style="width:90%"></i></div><div class="roi md">● 1857–1947 + constitutions</div></div>
+    <div class="sm-cell"><div class="subj">Urdu</div><div class="tgt">8<small>/10</small></div><div class="bar"><i style="width:80%"></i></div><div class="roi md">● Muhawarat = the trap</div></div>
+    <div class="sm-cell"><div class="subj">Essay</div><div class="tgt">13<small>/15</small></div><div class="bar"><i style="width:87%"></i></div><div class="roi md">● Template-driven</div></div>
+    <div class="sm-cell"><div class="subj">Personal Stmt</div><div class="tgt">9<small>/10</small></div><div class="bar"><i style="width:90%"></i></div><div class="roi hi">▲ 3-para blueprint</div></div>
+  </div>
+  <div class="note"><b>Total target ≈ 89–91.</b> Notice the subjective section (Essay + PS = 25 marks) is a quarter of the paper and is 100% controllable with a memorized skeleton. Students who chase MCQs and wing the writing cap out at ~75. You won't.</div>
+
+  <h3 class="blk">Priority order (by marks × predictability)</h3>
+  <ol class="rank">
+    <li><b>Subjective writing (25 marks)</b><br><span>Essay 15 + PS 10. Highest single block, fully templated. Lock the skeletons in week 1, polish in week 3.</span></li>
+    <li><b>English (20 marks)</b><br><span>Prepositions, synonyms/antonyms, sentence correction. Rule-based + the same ~50 vocab words recur.</span></li>
+    <li><b>General Knowledge (20 marks)</b><br><span>Geographic superlatives, SAARC, UN/world-org HQs, science firsts. Flashcard territory.</span></li>
+    <li><b>Islamiat + Pak Studies (20 marks)</b><br><span>Ghazawat with Hijri years, pillars, Quran facts; 1857–1947 timeline + 4 constitutions + geography.</span></li>
+    <li><b>Urdu (10 marks)</b><br><span>Muhawarat / zarb-ul-amsal, antonyms (متضاد), singular-plural (واحد/جمع). The same proverbs cycle through papers.</span></li>
+    <li><b>Math (5 marks)</b><br><span>Percentage, profit/loss, DST, averages, simple algebra. For you this is a warm-up — do it last in the hall so it never eats time.</span></li>
+  </ol>
+
+  <h3 class="blk">Exam mechanics (don't lose marks to the clock)</h3>
+  <div class="card">
+    <div class="chk"><input type="checkbox" data-k="mech1"><span class="chk-txt">Part I = 75 MCQs in <b>100 minutes</b> → ~75 sec/MCQ. <small>Do English + Math + the facts you're sure of first; flag-and-return on the rest. No negative marking — never leave a blank.</small></span></div>
+    <div class="chk"><input type="checkbox" data-k="mech2"><span class="chk-txt">Part II = Essay + PS in <b>40 minutes</b>. <small>Budget 22 min essay / 16 min PS / 2 min to re-read. Max 200 words each — quality of structure beats length.</small></span></div>
+    <div class="chk"><input type="checkbox" data-k="mech3"><span class="chk-txt">Write in your <b>stronger language</b> (English or Urdu) — examiner grades clarity, not which language. <small>Never mix Roman Urdu / "khichdi".</small></span></div>
+    <div class="chk"><input type="checkbox" data-k="mech4"><span class="chk-txt">Bring original CNIC/B-form + roll-number slip (issued ~11 June on the ETC portal). No calculator allowed.</span></div>
+  </div>
+
+  <h2 class="sec" style="margin-top:42px"><span class="n">02</span>The 19-Day Plan</h2>
+  <p class="sec-intro">Today is <b>2 June</b>; exam is <b>21 June</b>. Three phases: <b>Build</b> (rules + templates), <b>Load</b> (memorize the tables), <b>Lock</b> (recall + mocks). Tick each day as you finish — it feeds the progress bar up top.</p>
+
+  <div class="week-head">Phase 1 — Build <span>· Jun 2–7 · grammar rules + writing skeletons</span></div>
+
+  <div class="day"><div class="d-tag"><span class="dd">2</span><span class="dm">Mon</span></div><div class="d-body"><div class="d-focus">Setup + Essay engine</div><ul><li>Read the whole Essay tab; memorize the 4-paragraph skeleton word-for-word</li><li>Write ONE timed essay (22 min) on "Role of Youth in Pakistan's Progress"</li></ul><div class="chk" style="margin-top:6px"><input type="checkbox" data-k="d2"><span class="chk-txt">Day 2 done</span></div></div></div>
+
+  <div class="day"><div class="d-tag"><span class="dd">3</span><span class="dm">Tue</span></div><div class="d-body"><div class="d-focus">Personal Statement engine</div><ul><li>Memorize the 3-paragraph PS blueprint + the "law + my motivation" stock lines</li><li>Write the PS for "Why do you want to study law?" — your default, reusable answer</li></ul><div class="chk" style="margin-top:6px"><input type="checkbox" data-k="d3"><span class="chk-txt">Day 3 done</span></div></div></div>
+
+  <div class="day"><div class="d-tag"><span class="dd">4</span><span class="dm">Wed</span></div><div class="d-body"><div class="d-focus">English — prepositions</div><ul><li>Drill the IN/ON/AT logic + the full Fixed Prepositions table</li><li>Cover the right column, recall the preposition for each verb/adjective</li></ul><div class="chk" style="margin-top:6px"><input type="checkbox" data-k="d4"><span class="chk-txt">Day 4 done</span></div></div></div>
+
+  <div class="day"><div class="d-tag"><span class="dd">5</span><span class="dm">Thu</span></div><div class="d-body"><div class="d-focus">English — vocab + grammar traps</div><ul><li>Top synonyms/antonyms list (cover & recall, both directions)</li><li>Confusing pairs: between/among, beside/besides, during/while, fewer/less</li></ul><div class="chk" style="margin-top:6px"><input type="checkbox" data-k="d5"><span class="chk-txt">Day 5 done</span></div></div></div>
+
+  <div class="day"><div class="d-tag"><span class="dd">6</span><span class="dm">Fri</span></div><div class="d-body"><div class="d-focus">Math — clear it in one sitting</div><ul><li>Percentage, profit %, average, DST + relative speed, BODMAS, linear equations</li><li>Work the 8 model MCQs in the bank until each takes &lt;40 sec</li></ul><div class="chk" style="margin-top:6px"><input type="checkbox" data-k="d6"><span class="chk-txt">Day 6 done</span></div></div></div>
+
+  <div class="day"><div class="d-tag"><span class="dd">7</span><span class="dm">Sat</span></div><div class="d-body"><div class="d-focus">Review + 2nd essay/PS</div><ul><li>Re-test English prepositions + vocab (aim 90% recall)</li><li>Write a 2nd essay (Social Media) + adapt your PS to "contribute to society as a lawyer"</li></ul><div class="chk" style="margin-top:6px"><input type="checkbox" data-k="d7"><span class="chk-txt">Day 7 done</span></div></div></div>
+
+  <div class="week-head">Phase 2 — Load <span>· Jun 8–14 · pure memorization of the high-yield tables</span></div>
+
+  <div class="day"><div class="d-tag"><span class="dd">8</span><span class="dm">Sun</span></div><div class="d-body"><div class="d-focus">GK — Geography</div><ul><li>World + Pakistan superlatives, borders (Radcliffe/Durand/Khunjerab)</li><li>SAARC members + capitals</li></ul><div class="chk" style="margin-top:6px"><input type="checkbox" data-k="d8"><span class="chk-txt">Day 8 done</span></div></div></div>
+
+  <div class="day"><div class="d-tag"><span class="dd">9</span><span class="dm">Mon</span></div><div class="d-body"><div class="d-focus">GK — Orgs + Science</div><ul><li>UN + agency HQs (UNESCO, WHO, ICJ, IMF…), OIC, OPEC, Interpol</li><li>Everyday-science one-liners (vitamins, blood groups, bones, planets)</li></ul><div class="chk" style="margin-top:6px"><input type="checkbox" data-k="d9"><span class="chk-txt">Day 9 done</span></div></div></div>
+
+  <div class="day"><div class="d-tag"><span class="dd">10</span><span class="dm">Tue</span></div><div class="d-body"><div class="d-focus">Islamiat — Part 1</div><ul><li>5 Pillars, Kalimas, Quran facts (114 surahs / 30 paras), first revelation</li><li>Prophets' titles (Khalilullah, Kalimullah, Ruhullah…)</li></ul><div class="chk" style="margin-top:6px"><input type="checkbox" data-k="d10"><span class="chk-txt">Day 10 done</span></div></div></div>
+
+  <div class="day"><div class="d-tag"><span class="dd">11</span><span class="dm">Wed</span></div><div class="d-body"><div class="d-focus">Islamiat — Ghazawat</div><ul><li>Badr (2 AH), Uhud (3), Khandaq (5), Khyber (7), Conquest of Makkah (8), Hunayn (8), Tabuk (9)</li><li>Firsts: first man/woman/child to accept Islam; Khulafa order</li></ul><div class="chk" style="margin-top:6px"><input type="checkbox" data-k="d11"><span class="chk-txt">Day 11 done</span></div></div></div>
+
+  <div class="day"><div class="d-tag"><span class="dd">12</span><span class="dm">Thu</span></div><div class="d-body"><div class="d-focus">Pak Studies — Freedom timeline</div><ul><li>1857 → 1906 (ML) → 1916 (Lucknow) → 1930 (Allahabad) → 1940 (Lahore Res.) → 1947</li><li>Pakistan "firsts" (GG, PM, President, CJ)</li></ul><div class="chk" style="margin-top:6px"><input type="checkbox" data-k="d12"><span class="chk-txt">Day 12 done</span></div></div></div>
+
+  <div class="day"><div class="d-tag"><span class="dd">13</span><span class="dm">Fri</span></div><div class="d-body"><div class="d-focus">Pak Studies — Constitutions + geography</div><ul><li>1956 / 1962 / 1973 constitutions — who, what, key feature</li><li>Provinces, rivers, mountains, national symbols</li></ul><div class="chk" style="margin-top:6px"><input type="checkbox" data-k="d13"><span class="chk-txt">Day 13 done</span></div></div></div>
+
+  <div class="day"><div class="d-tag"><span class="dd">14</span><span class="dm">Sat</span></div><div class="d-body"><div class="d-focus">Urdu — muhawarat day</div><ul><li>Memorize the 50 muhawarat with meanings (cover the meaning column, recall)</li><li>Skim واحد/جمع and متضاد patterns</li></ul><div class="chk" style="margin-top:6px"><input type="checkbox" data-k="d14"><span class="chk-txt">Day 14 done</span></div></div></div>
+
+  <div class="week-head">Phase 3 — Lock <span>· Jun 15–20 · active recall, mocks, taper</span></div>
+
+  <div class="day"><div class="d-tag"><span class="dd">15</span><span class="dm">Sun</span></div><div class="d-body"><div class="d-focus">Full mock #1 (timed)</div><ul><li>75 MCQs in 100 min + Essay & PS in 40 min, exam conditions</li><li>Mark every wrong answer for a "leak list"</li></ul><div class="chk" style="margin-top:6px"><input type="checkbox" data-k="d15"><span class="chk-txt">Day 15 done</span></div></div></div>
+
+  <div class="day"><div class="d-tag"><span class="dd">16</span><span class="dm">Mon</span></div><div class="d-body"><div class="d-focus">Fix the leaks</div><ul><li>Re-drill only the topics you missed in mock #1</li><li>Re-test GK + Islamiat tables (cover & recall)</li></ul><div class="chk" style="margin-top:6px"><input type="checkbox" data-k="d16"><span class="chk-txt">Day 16 done</span></div></div></div>
+
+  <div class="day"><div class="d-tag"><span class="dd">17</span><span class="dm">Tue</span></div><div class="d-body"><div class="d-focus">English + Urdu recall</div><ul><li>Final pass on prepositions, vocab, muhawarat</li><li>Re-write your essay & PS from memory in &lt;38 min combined</li></ul><div class="chk" style="margin-top:6px"><input type="checkbox" data-k="d17"><span class="chk-txt">Day 17 done</span></div></div></div>
+
+  <div class="day"><div class="d-tag"><span class="dd">18</span><span class="dm">Wed</span></div><div class="d-body"><div class="d-focus">Full mock #2 (timed)</div><ul><li>Second full simulation — target 90%+ raw</li><li>Confirm your in-hall question order works</li></ul><div class="chk" style="margin-top:6px"><input type="checkbox" data-k="d18"><span class="chk-txt">Day 18 done</span></div></div></div>
+
+  <div class="day"><div class="d-tag"><span class="dd">19</span><span class="dm">Thu</span></div><div class="d-body"><div class="d-focus">Light revision only</div><ul><li>Read solved past papers — do NOT learn anything new</li><li>Skim the Pak Studies timeline + Ghazawat years one last time</li></ul><div class="chk" style="margin-top:6px"><input type="checkbox" data-k="d19"><span class="chk-txt">Day 19 done</span></div></div></div>
+
+  <div class="day"><div class="d-tag"><span class="dd">20</span><span class="dm">Fri</span></div><div class="d-body"><div class="d-focus">Taper + logistics</div><ul><li>Glance at flashcards for 1–2 hrs max, then stop</li><li>Pack CNIC + roll slip + transparent pen; confirm centre + travel time; sleep early</li></ul><div class="chk" style="margin-top:6px"><input type="checkbox" data-k="d20"><span class="chk-txt">Day 20 done</span></div></div></div>
+
+  <div class="day exam"><div class="d-tag"><span class="dd">21</span><span class="dm">Sun</span></div><div class="d-body"><div class="d-focus" style="color:var(--rose)">★ EXAM DAY</div><ul><li>Eat, arrive early, breathe. Part I order: English → Math → sure facts → flagged. Part II: essay first.</li><li>Fill every bubble. Re-read the writing for 2 minutes at the end.</li></ul></div></div>
+</section>
+
+<!-- ============ ESSAYS ============ -->
+<section class="panel" id="essays">
+  <h2 class="sec"><span class="n">03</span>Essay + Personal Statement</h2>
+  <p class="sec-intro">25 of your 100 marks — and the only part you can fully script in advance. HEC's analysis of every paper since 2018 shows <b>~90% of essay prompts</b> fall into three buckets: Social/Economic issues, Education, and Technology. Learn one template per bucket and you walk in unsurprised. Max 200 words each; ~22 min essay, ~16 min PS.</p>
+
+  <h3 class="blk">The 4-paragraph structure</h3>
+  <div class="card">
+    <div class="step"><div class="num">1</div><div class="stxt"><b>Introduction</b> — Hook + thesis. Name the topic and state the one position you'll defend. (2-3 sentences)</div></div>
+    <div class="step"><div class="num">2</div><div class="stxt"><b>Body 1 — case / causes.</b> Strongest argument or main causes, each tied to a concrete, ideally Pakistan-specific example.</div></div>
+    <div class="step"><div class="num">3</div><div class="stxt"><b>Body 2 — counter-view / effects + solution.</b> Acknowledge the other side or list effects, then give a realistic solution. This lifts a 9 to a 13.</div></div>
+    <div class="step"><div class="num">4</div><div class="stxt"><b>Conclusion</b> — Restate the thesis in fresh words + one forward line. No new points.</div></div>
+  </div>
+
+  <h3 class="blk">3 master templates (fill the blanks)</h3>
+  <p style="color:var(--muted);font-size:.88rem;margin-bottom:8px">Memorize these three openings + closings; they cover all 20 expected topics.</p>
+
+  <div class="template" style="margin-bottom:12px">
+    <p style="color:var(--gold-soft);font-weight:600;font-family:var(--display)">A · Negative-issue template <span style="color:var(--muted);font-weight:400;font-size:.82rem">(corruption, inflation, poverty, cyberbullying, AI threats)</span></p>
+    <p><b>Open:</b> "Among the many challenges facing Pakistan today, <span class="ph">[ISSUE]</span> stands out as one of the most pressing. It touches every section of society and, if left unchecked, threatens our social and economic stability. This essay examines its main causes and the steps needed to overcome it."</p>
+    <p><b>Close:</b> "In conclusion, <span class="ph">[ISSUE]</span> is not beyond solution. With honest governance, public awareness, and collective effort, Pakistan can turn this challenge into a turning point for progress."</p>
+  </div>
+
+  <div class="template" style="margin-bottom:12px">
+    <p style="color:var(--gold-soft);font-weight:600;font-family:var(--display)">B · Positive / general template <span style="color:var(--muted);font-weight:400;font-size:.82rem">(education, justice, role of youth, literacy, teachers)</span></p>
+    <p><b>Open:</b> "Few things matter more to the future of a nation than <span class="ph">[TOPIC]</span>. For a developing country like Pakistan, it is not a luxury but a necessity that shapes our progress and identity. This essay argues why <span class="ph">[TOPIC]</span> deserves to be a national priority."</p>
+    <p><b>Close:</b> "Ultimately, investing in <span class="ph">[TOPIC]</span> is investing in Pakistan itself. If pursued sincerely, it will not only solve present problems but build the stronger nation we all hope to see."</p>
+  </div>
+
+  <div class="template">
+    <p style="color:var(--gold-soft);font-weight:600;font-family:var(--display)">C · Technology template <span style="color:var(--muted);font-weight:400;font-size:.82rem">(social media, AI, internet, mobile phones, Digital Pakistan)</span></p>
+    <p><b>Open:</b> "In the 21st century, <span class="ph">[TECH]</span> has transformed the way we live, work, and think. Like any powerful tool, it is a double-edged sword — a source of great opportunity and, at the same time, serious risk. This essay weighs both sides and argues for balance."</p>
+    <p><b>Close:</b> "In short, <span class="ph">[TECH]</span> is here to stay. The answer lies not in rejecting it but in using it wisely — harnessing its benefits while guarding against its harms."</p>
+  </div>
+
+  <h3 class="blk">Worked example 1 — Negative issue (~190 words)</h3>
+  <p style="color:var(--muted);font-size:.9rem;margin-bottom:6px">Topic: <b>"Impact of Inflation on the Common Man"</b></p>
+  <div class="example">
+    Among the many challenges facing Pakistan today, inflation stands out as one of the most pressing. It silently erodes the earnings of ordinary people and, if left unchecked, threatens the stability of millions of households.<br><br>
+    The heaviest burden falls on the common man. When the prices of flour, fuel, and electricity rise faster than wages, a daily-wage worker or a salaried clerk must cut back on food, medicine, and his children's education. What was once affordable becomes a luxury, and families that were already struggling are pushed toward debt.<br><br>
+    The causes are partly global and partly our own — a weak currency, heavy borrowing, and dependence on imports. Yet the solution lies within reach: disciplined economic policy, support for local production, targeted subsidies for the poorest, and an end to the hoarding that worsens shortages.<br><br>
+    In conclusion, inflation is not beyond solution. With honest governance and collective effort, Pakistan can ease the pressure on its people and turn this hardship into a turning point for reform.
+  </div>
+
+  <h3 class="blk">Worked example 2 — Technology (~185 words)</h3>
+  <p style="color:var(--muted);font-size:.9rem;margin-bottom:6px">Topic: <b>"Impact of Artificial Intelligence on Jobs"</b></p>
+  <div class="example">
+    In the 21st century, artificial intelligence has transformed the way we live and work. Like any powerful tool, it is a double-edged sword — a source of great opportunity and, at the same time, serious risk to the world of work.<br><br>
+    On one hand, AI creates new possibilities. It removes dull, repetitive tasks, raises productivity, and opens entirely new careers in data, software, and digital services — fields in which young Pakistanis are already earning through freelancing and IT exports.<br><br>
+    On the other hand, the same technology can displace workers whose jobs are easily automated, from clerks to factory hands. Without preparation, this could widen unemployment and inequality in a country that already struggles to create enough jobs.<br><br>
+    The way forward is not fear but readiness. By reforming education toward technical and digital skills, and by training workers to use AI rather than compete with it, Pakistan can make the technology an ally.<br><br>
+    In short, AI is here to stay. The answer lies not in rejecting it but in using it wisely — harnessing its benefits while guarding against its harms.
+  </div>
+  <div class="note"><b>Why these score:</b> clear thesis, one Pakistan-specific example, a counterweight + concrete solution, tidy conclusion — all under 200 words, no rare vocabulary needed.</div>
+
+  <h3 class="blk">Skeleton outlines — top 8 topics</h3>
+  <table class="tbl"><thead><tr><th>Topic</th><th>Body 1</th><th>Body 2 / Solution</th></tr></thead><tbody>
+    <tr><td><b>Role of Youth</b></td><td>Youth = majority of population; economic & social engine</td><td>Risk of brain drain/unemployment → skills + jobs at home</td></tr>
+    <tr><td><b>Corruption</b></td><td>Drains resources, kills merit & investment</td><td>Accountability, transparency, digital governance</td></tr>
+    <tr><td><b>Importance of Justice</b></td><td>Rule of law protects rights & stability</td><td>Delays & access gaps → speedy, affordable justice</td></tr>
+    <tr><td><b>Women's Empowerment</b></td><td>Half the population; economic & social gain</td><td>Education + legal protection + workplace access</td></tr>
+    <tr><td><b>Social Media</b></td><td>Connectivity, information, business, awareness</td><td>Addiction, fake news, anxiety → responsible use</td></tr>
+    <tr><td><b>Education & Development</b></td><td>Builds skilled workforce, tolerance, democracy</td><td>Literacy crisis → technical & universal education</td></tr>
+    <tr><td><b>Overpopulation</b></td><td>Strains jobs, resources, services</td><td>Awareness, family planning, education of women</td></tr>
+    <tr><td><b>Climate Change / Floods</b></td><td>Pakistan highly vulnerable; 2022 floods</td><td>Tree planting, water management, global cooperation</td></tr>
+  </tbody></table>
+
+  <h3 class="blk">All 20 expected topics for 2026</h3>
+  <p style="color:var(--muted);font-size:.85rem;margin-bottom:8px">Category 1 — Social & Economic (HEC favourites)</p>
+  <div class="pill-row">
+    <span class="pill hot">Role of youth in progress</span><span class="pill hot">Inflation & the common man</span><span class="pill hot">Poverty: causes & solutions</span><span class="pill hot">Importance of justice</span><span class="pill hot">Corruption & development</span><span class="pill">Social media & opinion</span><span class="pill">Women's rights in Islam</span><span class="pill">Overpopulation</span>
+  </div>
+  <p style="color:var(--muted);font-size:.85rem;margin:14px 0 8px">Category 2 — Education & Literacy</p>
+  <div class="pill-row">
+    <span class="pill">Co-education: pros & cons</span><span class="pill">Technical education for youth</span><span class="pill">Single National Curriculum</span><span class="pill">Teachers in nation-building</span><span class="pill">Distance vs traditional learning</span><span class="pill">Literacy = key to success</span>
+  </div>
+  <p style="color:var(--muted);font-size:.85rem;margin:14px 0 8px">Category 3 — Technology & Modern Trends</p>
+  <div class="pill-row">
+    <span class="pill hot">AI's impact on jobs</span><span class="pill">Cyberbullying</span><span class="pill">IT in education</span><span class="pill">Mobile phones: pros & cons</span><span class="pill">Internet & reading habits</span><span class="pill">Digital Pakistan</span>
+  </div>
+
+  <div class="card" style="margin-top:16px">
+    <div class="chk"><input type="checkbox" data-k="e1"><span class="chk-txt">Memorized the 4-paragraph essay structure</span></div>
+    <div class="chk"><input type="checkbox" data-k="e2"><span class="chk-txt">Memorized all 3 master templates (open + close)</span></div>
+    <div class="chk"><input type="checkbox" data-k="e3"><span class="chk-txt">Written 2 timed essays from 2 different buckets</span></div>
+    <div class="chk"><input type="checkbox" data-k="e4"><span class="chk-txt">Reviewed all 8 skeleton outlines</span></div>
+  </div>
+
+  <h2 class="sec" style="margin-top:42px"><span class="n">04</span>Personal Statement — 10 marks</h2>
+  <p class="sec-intro">An essay is about the topic; a PS is about <b>you</b> — your motivation, mindset, and goals. Use a 3-paragraph structure, never one block. Most prompts reduce to "Why law?" or "How will you contribute?" — prepare one strong answer and adapt it.</p>
+
+  <h3 class="blk">The 3-paragraph blueprint</h3>
+  <div class="card">
+    <div class="step"><div class="num">1</div><div class="stxt"><b>Conviction + connection.</b> A strong belief, then your personal link to it. "I have always believed… / Growing up, I saw…"</div></div>
+    <div class="step"><div class="num">2</div><div class="stxt"><b>Evidence (longest).</b> A personal example, skill, or observation that proves you care — and how law lets you act on it.</div></div>
+    <div class="step"><div class="num">3</div><div class="stxt"><b>Goal + give-back.</b> What you'll do with the degree and how it serves others. End forward-looking.</div></div>
+  </div>
+
+  <h3 class="blk">Worked example (~170 words)</h3>
+  <p style="color:var(--muted);font-size:.9rem;margin-bottom:6px">Prompt: <b>"Why do you want to study law, and how can you contribute to society as a lawyer?"</b></p>
+  <div class="example">
+    I have always believed that a society is only as fair as the access its weakest members have to justice. Coming from a background in computer science, I learned to think in systems and rules — and I came to see the law as the most powerful system of all, the one that decides how fairly every other system runs.<br><br>
+    My analytical training taught me to read problems carefully, weigh evidence, and argue from logic rather than emotion — exactly the habits a good lawyer needs. I have often found myself helping friends and family make sense of documents and disputes they found intimidating. Law would let me turn that instinct into real, qualified help.<br><br>
+    As a lawyer, I want to make legal understanding less of a privilege and more of a right — through honest practice and, eventually, pro-bono work for those who cannot afford counsel. My goal is not only to practise law, but to widen the door to justice for those standing outside it.
+  </div>
+  <div class="warn"><b>PS killers:</b> generic "lawyers are important" lines (that's an essay), no personal example, exceeding 200 words, or sounding interchangeable with everyone else. Make at least one sentence unmistakably <i>yours</i>.</div>
+
+  <h3 class="blk">Other PS prompts to be ready for</h3>
+  <div class="pill-row">
+    <span class="pill">How can you bring positive change to society?</span><span class="pill">A problem you want to solve in your life</span><span class="pill">Your greatest strength &amp; how it helps in law</span><span class="pill">Why this field over others?</span><span class="pill">A challenge you overcame</span>
+  </div>
+
+  <div class="card" style="margin-top:10px">
+    <div class="chk"><input type="checkbox" data-k="ps1"><span class="chk-txt">Memorized the 3-paragraph PS blueprint</span></div>
+    <div class="chk"><input type="checkbox" data-k="ps2"><span class="chk-txt">Written my own reusable "why law" PS</span></div>
+    <div class="chk"><input type="checkbox" data-k="ps3"><span class="chk-txt">Adapted it to a "contribute to society" prompt</span></div>
+  </div>
+</section>
+
+<section class="panel" id="mcq">
+  <h2 class="sec"><span class="n">05</span>MCQ Bank — 110 high-frequency</h2>
+  <p class="sec-intro">Tap any question to reveal the answer. These cover the exact categories LAT examiners recycle — world capitals/currencies/organizations, Pakistan history &amp; geography, Islamiat, everyday science, and basic math. Filter by subject; treat each explanation line as the thing to memorize.</p>
+
+  <div class="subj-filter" id="mcq-filter">
+    <button class="fbtn on" data-f="all">All (110)</button>
+    <button class="fbtn" data-f="gk">World GK</button>
+    <button class="fbtn" data-f="pak">Pakistan</button>
+    <button class="fbtn" data-f="isl">Islamiat</button>
+    <button class="fbtn" data-f="sci">Science</button>
+    <button class="fbtn" data-f="math">Math</button>
+  </div>
+
+  <div id="mcq-list">
+    <div class="mcq" data-s="gk"><div class="mcq-q"><div class="qt"><b>GK</b>Largest ocean on Earth?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">Pacific Ocean</span><div class="why">Largest &amp; deepest; smallest is the Arctic Ocean.</div></div></div></div>
+    <div class="mcq" data-s="gk"><div class="mcq-q"><div class="qt"><b>GK</b>Longest river in the world?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">River Nile (~6,650 km)</span><div class="why">Amazon is largest by volume; Nile is the standard 'longest' answer.</div></div></div></div>
+    <div class="mcq" data-s="gk"><div class="mcq-q"><div class="qt"><b>GK</b>Largest country by area?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">Russia</span><div class="why">Most populous country is now India.</div></div></div></div>
+    <div class="mcq" data-s="gk"><div class="mcq-q"><div class="qt"><b>GK</b>Smallest country in the world?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">Vatican City</span><div class="why">Located within Rome, Italy.</div></div></div></div>
+    <div class="mcq" data-s="gk"><div class="mcq-q"><div class="qt"><b>GK</b>Largest continent?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">Asia</span><div class="why">Smallest continent: Australia.</div></div></div></div>
+    <div class="mcq" data-s="gk"><div class="mcq-q"><div class="qt"><b>GK</b>Largest hot desert?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">Sahara (Africa)</span><div class="why">Antarctica is the largest desert overall (cold).</div></div></div></div>
+    <div class="mcq" data-s="gk"><div class="mcq-q"><div class="qt"><b>GK</b>Highest mountain in the world?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">Mount Everest (8,849 m)</span><div class="why">On the Nepal-China border.</div></div></div></div>
+    <div class="mcq" data-s="gk"><div class="mcq-q"><div class="qt"><b>GK</b>SAARC headquarters &amp; founding year?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">Kathmandu, Nepal — 1985</span><div class="why">8 members: Afghanistan, Bangladesh, Bhutan, India, Maldives, Nepal, Pakistan, Sri Lanka.</div></div></div></div>
+    <div class="mcq" data-s="gk"><div class="mcq-q"><div class="qt"><b>GK</b>Capital of Bhutan?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">Thimphu</span><div class="why">Maldives-Malé, Nepal-Kathmandu, Sri Lanka-Sri Jayawardenepura Kotte.</div></div></div></div>
+    <div class="mcq" data-s="gk"><div class="mcq-q"><div class="qt"><b>GK</b>UN headquarters &amp; founding year?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">New York, USA — 1945</span><div class="why">193 member states; 6 principal organs.</div></div></div></div>
+    <div class="mcq" data-s="gk"><div class="mcq-q"><div class="qt"><b>GK</b>First UN Secretary-General?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">Trygve Lie (Norway)</span><div class="why">Served 1946-1952.</div></div></div></div>
+    <div class="mcq" data-s="gk"><div class="mcq-q"><div class="qt"><b>GK</b>UNESCO headquarters?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">Paris, France</span><div class="why">Education, science &amp; culture body of the UN.</div></div></div></div>
+    <div class="mcq" data-s="gk"><div class="mcq-q"><div class="qt"><b>GK</b>WHO headquarters?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">Geneva, Switzerland</span><div class="why">ILO and WTO are also in Geneva.</div></div></div></div>
+    <div class="mcq" data-s="gk"><div class="mcq-q"><div class="qt"><b>GK</b>ICJ (International Court of Justice) seat?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">The Hague, Netherlands</span><div class="why">The UN's principal judicial organ.</div></div></div></div>
+    <div class="mcq" data-s="gk"><div class="mcq-q"><div class="qt"><b>GK</b>IMF &amp; World Bank headquarters?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">Washington D.C., USA</span><div class="why">Both founded after the 1944 Bretton Woods conference.</div></div></div></div>
+    <div class="mcq" data-s="gk"><div class="mcq-q"><div class="qt"><b>GK</b>OIC headquarters &amp; founding year?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">Jeddah, Saudi Arabia — 1969</span><div class="why">Second-largest inter-governmental body after the UN.</div></div></div></div>
+    <div class="mcq" data-s="gk"><div class="mcq-q"><div class="qt"><b>GK</b>OPEC headquarters?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">Vienna, Austria</span><div class="why">Oil-exporting countries' organization.</div></div></div></div>
+    <div class="mcq" data-s="gk"><div class="mcq-q"><div class="qt"><b>GK</b>Interpol headquarters?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">Lyon, France</span><div class="why">International police cooperation.</div></div></div></div>
+    <div class="mcq" data-s="gk"><div class="mcq-q"><div class="qt"><b>GK</b>NATO headquarters?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">Brussels, Belgium</span><div class="why">Military alliance founded 1949.</div></div></div></div>
+    <div class="mcq" data-s="gk"><div class="mcq-q"><div class="qt"><b>GK</b>Founder of the Red Cross?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">Henry Dunant</span><div class="why">HQ in Geneva; he won the first Nobel Peace Prize (1901).</div></div></div></div>
+    <div class="mcq" data-s="gk"><div class="mcq-q"><div class="qt"><b>GK</b>Currency of Japan?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">Yen</span><div class="why">Saudi Arabia-Riyal, UK-Pound, Bangladesh-Taka, Turkey-Lira.</div></div></div></div>
+    <div class="mcq" data-s="gk"><div class="mcq-q"><div class="qt"><b>GK</b>Capital of Australia?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">Canberra</span><div class="why">Not Sydney. Canada-Ottawa, Turkey-Ankara, USA-Washington D.C.</div></div></div></div>
+    <div class="mcq" data-s="gk"><div class="mcq-q"><div class="qt"><b>GK</b>Who invented the telephone?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">Alexander Graham Bell</span><div class="why">Light bulb-Edison, radio-Marconi.</div></div></div></div>
+    <div class="mcq" data-s="gk"><div class="mcq-q"><div class="qt"><b>GK</b>Who discovered penicillin?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">Alexander Fleming</span><div class="why">The first antibiotic, in 1928.</div></div></div></div>
+    <div class="mcq" data-s="gk"><div class="mcq-q"><div class="qt"><b>GK</b>Who proposed the theory of relativity?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">Albert Einstein</span><div class="why">Law of gravity-Newton; evolution-Darwin.</div></div></div></div>
+    <div class="mcq" data-s="gk"><div class="mcq-q"><div class="qt"><b>GK</b>World War II lasted?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">1939-1945</span><div class="why">WWI: 1914-1918; League of Nations formed 1920.</div></div></div></div>
+    <div class="mcq" data-s="gk"><div class="mcq-q"><div class="qt"><b>GK</b>The Suez Canal connects?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">Mediterranean Sea &amp; Red Sea</span><div class="why">In Egypt; a key global shipping route.</div></div></div></div>
+    <div class="mcq" data-s="gk"><div class="mcq-q"><div class="qt"><b>GK</b>Largest country by population?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">India</span><div class="why">Surpassed China; both over 1.4 billion.</div></div></div></div>
+    <div class="mcq" data-s="gk"><div class="mcq-q"><div class="qt"><b>GK</b>Which is the smallest ocean?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">Arctic Ocean</span><div class="why">Around the North Pole.</div></div></div></div>
+    <div class="mcq" data-s="gk"><div class="mcq-q"><div class="qt"><b>GK</b>Currency of the United Kingdom?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">Pound Sterling (£)</span><div class="why">One of the oldest currencies still in use.</div></div></div></div>
+    <div class="mcq" data-s="pak"><div class="mcq-q"><div class="qt"><b>PAK</b>Pakistan gained independence on?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">14 August 1947</span><div class="why">Boundary drawn by the Radcliffe Award.</div></div></div></div>
+    <div class="mcq" data-s="pak"><div class="mcq-q"><div class="qt"><b>PAK</b>Founder &amp; first Governor-General of Pakistan?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">Quaid-e-Azam Muhammad Ali Jinnah</span><div class="why">Born 25 Dec 1876, Karachi; died 11 Sep 1948.</div></div></div></div>
+    <div class="mcq" data-s="pak"><div class="mcq-q"><div class="qt"><b>PAK</b>First Prime Minister of Pakistan?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">Liaquat Ali Khan</span><div class="why">Known as Quaid-e-Millat.</div></div></div></div>
+    <div class="mcq" data-s="pak"><div class="mcq-q"><div class="qt"><b>PAK</b>National poet of Pakistan?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">Allama Muhammad Iqbal</span><div class="why">Gave the idea of a separate state in his 1930 Allahabad Address.</div></div></div></div>
+    <div class="mcq" data-s="pak"><div class="mcq-q"><div class="qt"><b>PAK</b>All-India Muslim League was founded?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">30 December 1906, Dhaka</span><div class="why">To protect the political rights of Muslims.</div></div></div></div>
+    <div class="mcq" data-s="pak"><div class="mcq-q"><div class="qt"><b>PAK</b>Lahore (Pakistan) Resolution was passed on?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">23 March 1940</span><div class="why">Moved by A.K. Fazlul Haq; now Pakistan Day.</div></div></div></div>
+    <div class="mcq" data-s="pak"><div class="mcq-q"><div class="qt"><b>PAK</b>Quaid's Fourteen Points were presented in?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">1929</span><div class="why">A response to the Nehru Report.</div></div></div></div>
+    <div class="mcq" data-s="pak"><div class="mcq-q"><div class="qt"><b>PAK</b>Lucknow Pact between Congress &amp; Muslim League?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">1916</span><div class="why">Marked Hindu-Muslim unity for a time.</div></div></div></div>
+    <div class="mcq" data-s="pak"><div class="mcq-q"><div class="qt"><b>PAK</b>Partition of Bengal took place in?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">1905</span><div class="why">Annulled in 1911.</div></div></div></div>
+    <div class="mcq" data-s="pak"><div class="mcq-q"><div class="qt"><b>PAK</b>First Constitution of Pakistan was enforced in?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">1956</span><div class="why">Declared Pakistan an 'Islamic Republic'; abrogated 1958.</div></div></div></div>
+    <div class="mcq" data-s="pak"><div class="mcq-q"><div class="qt"><b>PAK</b>Which constitution was given by Ayub Khan?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">1962 Constitution</span><div class="why">Introduced a presidential system.</div></div></div></div>
+    <div class="mcq" data-s="pak"><div class="mcq-q"><div class="qt"><b>PAK</b>Current Constitution of Pakistan?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">1973 Constitution</span><div class="why">Parliamentary system; given under Z.A. Bhutto.</div></div></div></div>
+    <div class="mcq" data-s="pak"><div class="mcq-q"><div class="qt"><b>PAK</b>National language of Pakistan?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">Urdu</span><div class="why">English is the official language for many purposes.</div></div></div></div>
+    <div class="mcq" data-s="pak"><div class="mcq-q"><div class="qt"><b>PAK</b>Capital of Pakistan?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">Islamabad</span><div class="why">Karachi was the first capital; shifted in the 1960s.</div></div></div></div>
+    <div class="mcq" data-s="pak"><div class="mcq-q"><div class="qt"><b>PAK</b>Largest province of Pakistan by area?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">Balochistan</span><div class="why">By population: Punjab.</div></div></div></div>
+    <div class="mcq" data-s="pak"><div class="mcq-q"><div class="qt"><b>PAK</b>Highest mountain peak in Pakistan?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">K-2 (8,611 m)</span><div class="why">World's 2nd-highest, in the Karakoram range.</div></div></div></div>
+    <div class="mcq" data-s="pak"><div class="mcq-q"><div class="qt"><b>PAK</b>Longest river of Pakistan?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">River Indus</span><div class="why">Lifeline of Pakistan's agriculture.</div></div></div></div>
+    <div class="mcq" data-s="pak"><div class="mcq-q"><div class="qt"><b>PAK</b>National animal of Pakistan?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">Markhor</span><div class="why">National bird: Chukar.</div></div></div></div>
+    <div class="mcq" data-s="pak"><div class="mcq-q"><div class="qt"><b>PAK</b>National flower &amp; national tree of Pakistan?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">Jasmine (Chambeli) &amp; Deodar</span><div class="why">National sport: field hockey.</div></div></div></div>
+    <div class="mcq" data-s="pak"><div class="mcq-q"><div class="qt"><b>PAK</b>Boundary line between Pakistan and Afghanistan?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">Durand Line (~2,611 km)</span><div class="why">Pakistan-India: Radcliffe Line; China: Khunjerab Pass.</div></div></div></div>
+    <div class="mcq" data-s="pak"><div class="mcq-q"><div class="qt"><b>PAK</b>How many provinces does Pakistan have?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">Four</span><div class="why">Punjab, Sindh, Khyber Pakhtunkhwa, Balochistan.</div></div></div></div>
+    <div class="mcq" data-s="pak"><div class="mcq-q"><div class="qt"><b>PAK</b>First Chief Justice of Pakistan?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">Justice Sir Abdul Rashid</span><div class="why">First President: Iskander Mirza (1956).</div></div></div></div>
+    <div class="mcq" data-s="pak"><div class="mcq-q"><div class="qt"><b>PAK</b>Tarbela Dam is built on which river?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">River Indus</span><div class="why">Mangla Dam is on the River Jhelum.</div></div></div></div>
+    <div class="mcq" data-s="pak"><div class="mcq-q"><div class="qt"><b>PAK</b>War of Independence (first major uprising) was in?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">1857</span><div class="why">Start of the timeline: 1857 - 1906 - 1940 - 1947.</div></div></div></div>
+    <div class="mcq" data-s="pak"><div class="mcq-q"><div class="qt"><b>PAK</b>When did Pakistan join the United Nations?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">30 September 1947</span><div class="why">Within weeks of independence.</div></div></div></div>
+    <div class="mcq" data-s="pak"><div class="mcq-q"><div class="qt"><b>PAK</b>First Nishan-e-Haider recipient?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">Captain Raja Muhammad Sarwar</span><div class="why">Pakistan's highest military gallantry award.</div></div></div></div>
+    <div class="mcq" data-s="pak"><div class="mcq-q"><div class="qt"><b>PAK</b>Allama Iqbal's Allahabad Address was in?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">1930</span><div class="why">Where he proposed a separate Muslim state in the northwest.</div></div></div></div>
+    <div class="mcq" data-s="pak"><div class="mcq-q"><div class="qt"><b>PAK</b>The Objectives Resolution was passed in?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">1949</span><div class="why">Foundation of all later constitutions.</div></div></div></div>
+    <div class="mcq" data-s="isl"><div class="mcq-q"><div class="qt"><b>ISL</b>The first Ghazwa of Islam?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">Ghazwa-e-Badr (2 A.H.)</span><div class="why">First major battle; a decisive victory.</div></div></div></div>
+    <div class="mcq" data-s="isl"><div class="mcq-q"><div class="qt"><b>ISL</b>Battle of Uhud was fought in?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">3 A.H.</span><div class="why">Order: Badr 2, Uhud 3, Khandaq 5, Khyber 7, Makkah 8, Hunayn 8, Tabuk 9.</div></div></div></div>
+    <div class="mcq" data-s="isl"><div class="mcq-q"><div class="qt"><b>ISL</b>Battle of the Trench is also known as?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">Ghazwa-e-Khandaq / Ahzab (5 A.H.)</span><div class="why">Trench dug on the advice of Hazrat Salman Farsi (RA).</div></div></div></div>
+    <div class="mcq" data-s="isl"><div class="mcq-q"><div class="qt"><b>ISL</b>Conquest of Makkah took place in?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">8 A.H.</span><div class="why">The Prophet ﷺ entered Makkah peacefully.</div></div></div></div>
+    <div class="mcq" data-s="isl"><div class="mcq-q"><div class="qt"><b>ISL</b>The last Ghazwa of the Prophet ﷺ?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">Ghazwa-e-Tabuk (9 A.H.)</span><div class="why">Against the Byzantines.</div></div></div></div>
+    <div class="mcq" data-s="isl"><div class="mcq-q"><div class="qt"><b>ISL</b>Total number of Ghazawat (battles the Prophet ﷺ joined)?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">27</span><div class="why">Battles he led personally are Ghazawat; others are Sariyya.</div></div></div></div>
+    <div class="mcq" data-s="isl"><div class="mcq-q"><div class="qt"><b>ISL</b>How many pillars (arkan) of Islam?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">Five</span><div class="why">Shahada, Salah, Zakat, Sawm, Hajj.</div></div></div></div>
+    <div class="mcq" data-s="isl"><div class="mcq-q"><div class="qt"><b>ISL</b>Number of Surahs in the Holy Quran?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">114</span><div class="why">Divided into 30 Paras (Juz).</div></div></div></div>
+    <div class="mcq" data-s="isl"><div class="mcq-q"><div class="qt"><b>ISL</b>Longest and shortest Surah of the Quran?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">Al-Baqarah (longest), Al-Kawthar (shortest)</span><div class="why">Al-Baqarah has 286 verses.</div></div></div></div>
+    <div class="mcq" data-s="isl"><div class="mcq-q"><div class="qt"><b>ISL</b>Where &amp; what was the first revelation?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">Cave of Hira — Surah Al-Alaq (610 CE)</span><div class="why">Brought by Angel Jibreel (AS).</div></div></div></div>
+    <div class="mcq" data-s="isl"><div class="mcq-q"><div class="qt"><b>ISL</b>Title of Hazrat Ibrahim (AS)?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">Khalilullah (Friend of Allah)</span><div class="why">Musa-Kalimullah, Isa-Ruhullah, Adam-Safiullah.</div></div></div></div>
+    <div class="mcq" data-s="isl"><div class="mcq-q"><div class="qt"><b>ISL</b>Title of the Prophet Muhammad ﷺ?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">Khatam-un-Nabiyyin / Rahmatul-lil-Alameen</span><div class="why">The last of the prophets; a mercy to all worlds.</div></div></div></div>
+    <div class="mcq" data-s="isl"><div class="mcq-q"><div class="qt"><b>ISL</b>First man to accept Islam?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">Hazrat Abu Bakr (RA)</span><div class="why">First woman: Khadija (RA); first child: Ali (RA).</div></div></div></div>
+    <div class="mcq" data-s="isl"><div class="mcq-q"><div class="qt"><b>ISL</b>First freed slave to accept Islam?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">Hazrat Zaid bin Harithah (RA)</span><div class="why">An early and beloved companion.</div></div></div></div>
+    <div class="mcq" data-s="isl"><div class="mcq-q"><div class="qt"><b>ISL</b>Correct order of the Khulafa-e-Rashideen?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">Abu Bakr - Umar - Usman - Ali (RA)</span><div class="why">The four 'rightly-guided' caliphs (632-661 CE).</div></div></div></div>
+    <div class="mcq" data-s="isl"><div class="mcq-q"><div class="qt"><b>ISL</b>Rate of Zakat on saved wealth?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">2.5% (one-fortieth)</span><div class="why">Paid yearly on wealth above the nisab.</div></div></div></div>
+    <div class="mcq" data-s="isl"><div class="mcq-q"><div class="qt"><b>ISL</b>Number of obligatory daily prayers?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">Five</span><div class="why">Fajr, Zuhr, Asr, Maghrib, Isha.</div></div></div></div>
+    <div class="mcq" data-s="isl"><div class="mcq-q"><div class="qt"><b>ISL</b>In which Islamic month is fasting obligatory?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">Ramadan (9th month)</span><div class="why">The month the Quran began to be revealed.</div></div></div></div>
+    <div class="mcq" data-s="isl"><div class="mcq-q"><div class="qt"><b>ISL</b>In which month is Hajj performed?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">Dhul-Hijjah (12th month)</span><div class="why">The 8th-13th days.</div></div></div></div>
+    <div class="mcq" data-s="isl"><div class="mcq-q"><div class="qt"><b>ISL</b>The Hijra to Madinah took place in?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">622 CE (year 1 A.H.)</span><div class="why">Marks the start of the Islamic calendar.</div></div></div></div>
+    <div class="mcq" data-s="isl"><div class="mcq-q"><div class="qt"><b>ISL</b>Who compiled the Quran into book form first?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">Hazrat Abu Bakr (RA)</span><div class="why">Standardized later under Hazrat Usman (RA).</div></div></div></div>
+    <div class="mcq" data-s="isl"><div class="mcq-q"><div class="qt"><b>ISL</b>How many Sajdah (prostrations) are in the Quran?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">14</span><div class="why">Sajdah-e-Tilawat verses.</div></div></div></div>
+    <div class="mcq" data-s="isl"><div class="mcq-q"><div class="qt"><b>ISL</b>The first Kalima is called?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">Kalima Tayyab</span><div class="why">'La ilaha illallah Muhammad-ur-Rasulullah'.</div></div></div></div>
+    <div class="mcq" data-s="isl"><div class="mcq-q"><div class="qt"><b>ISL</b>How many prophets are mentioned by name in the Quran?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">25</span><div class="why">Though the total number of prophets is far greater.</div></div></div></div>
+    <div class="mcq" data-s="isl"><div class="mcq-q"><div class="qt"><b>ISL</b>Which prayer has no Azan or Iqamah?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">Eid &amp; Janazah prayer</span><div class="why">Janazah has no Ruku or Sajdah either.</div></div></div></div>
+    <div class="mcq" data-s="sci"><div class="mcq-q"><div class="qt"><b>SCI</b>Number of bones in an adult human body?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">206</span><div class="why">A newborn has about 300; many fuse with age.</div></div></div></div>
+    <div class="mcq" data-s="sci"><div class="mcq-q"><div class="qt"><b>SCI</b>Universal blood donor &amp; recipient?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">Donor: O-negative; Recipient: AB-positive</span><div class="why">Based on ABO and Rh antigens.</div></div></div></div>
+    <div class="mcq" data-s="sci"><div class="mcq-q"><div class="qt"><b>SCI</b>Largest organ of the human body?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">Skin</span><div class="why">Largest internal organ / gland: liver.</div></div></div></div>
+    <div class="mcq" data-s="sci"><div class="mcq-q"><div class="qt"><b>SCI</b>Deficiency of Vitamin C causes?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">Scurvy</span><div class="why">Vit D-rickets, Vit A-night blindness, iodine-goitre.</div></div></div></div>
+    <div class="mcq" data-s="sci"><div class="mcq-q"><div class="qt"><b>SCI</b>Hardest natural substance?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">Diamond</span><div class="why">A crystalline form of carbon.</div></div></div></div>
+    <div class="mcq" data-s="sci"><div class="mcq-q"><div class="qt"><b>SCI</b>Largest &amp; smallest planet of the solar system?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">Jupiter (largest), Mercury (smallest)</span><div class="why">Mercury is also closest to the Sun.</div></div></div></div>
+    <div class="mcq" data-s="sci"><div class="mcq-q"><div class="qt"><b>SCI</b>Which planet is called the 'Red Planet'?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">Mars</span><div class="why">Due to iron-oxide on its surface.</div></div></div></div>
+    <div class="mcq" data-s="sci"><div class="mcq-q"><div class="qt"><b>SCI</b>Approximate speed of light?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">3 x 10^8 m/s (~300,000 km/s)</span><div class="why">Fastest known speed in the universe.</div></div></div></div>
+    <div class="mcq" data-s="sci"><div class="mcq-q"><div class="qt"><b>SCI</b>Boiling point of water at sea level?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">100 degrees Celsius</span><div class="why">Freezing point: 0 degrees Celsius.</div></div></div></div>
+    <div class="mcq" data-s="sci"><div class="mcq-q"><div class="qt"><b>SCI</b>Normal human body temperature?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">37 C (98.6 F)</span><div class="why">Measured at rest.</div></div></div></div>
+    <div class="mcq" data-s="sci"><div class="mcq-q"><div class="qt"><b>SCI</b>Number of chambers in the human heart?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">Four</span><div class="why">Two atria and two ventricles.</div></div></div></div>
+    <div class="mcq" data-s="sci"><div class="mcq-q"><div class="qt"><b>SCI</b>Gas released by plants during photosynthesis?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">Oxygen</span><div class="why">They absorb carbon dioxide and release oxygen.</div></div></div></div>
+    <div class="mcq" data-s="sci"><div class="mcq-q"><div class="qt"><b>SCI</b>SI unit of force?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">Newton (N)</span><div class="why">Energy-Joule, power-Watt, pressure-Pascal.</div></div></div></div>
+    <div class="mcq" data-s="sci"><div class="mcq-q"><div class="qt"><b>SCI</b>Which gas is most abundant in Earth's atmosphere?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">Nitrogen (~78%)</span><div class="why">Oxygen is about 21%.</div></div></div></div>
+    <div class="mcq" data-s="sci"><div class="mcq-q"><div class="qt"><b>SCI</b>A neutral solution has a pH of?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">7</span><div class="why">Below 7 = acidic, above 7 = basic.</div></div></div></div>
+    <div class="mcq" data-s="math"><div class="mcq-q"><div class="qt"><b>MATH</b>If 20% of a number is 40, the number is?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">200</span><div class="why">x x 0.20 = 40 → x = 200.</div></div></div></div>
+    <div class="mcq" data-s="math"><div class="mcq-q"><div class="qt"><b>MATH</b>CP = Rs.800, SP = Rs.1000. Profit %?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">25%</span><div class="why">(200 / 800) x 100 = 25%.</div></div></div></div>
+    <div class="mcq" data-s="math"><div class="mcq-q"><div class="qt"><b>MATH</b>Average of 10, 20, 30, 40?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">25</span><div class="why">Sum 100 / 4 = 25.</div></div></div></div>
+    <div class="mcq" data-s="math"><div class="mcq-q"><div class="qt"><b>MATH</b>Solve: 5x = 45</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">x = 9</span><div class="why">Divide both sides by 5.</div></div></div></div>
+    <div class="mcq" data-s="math"><div class="mcq-q"><div class="qt"><b>MATH</b>Perimeter of a triangle with sides 6.5, 7, 8 cm?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">21.5 cm</span><div class="why">Sum of all sides.</div></div></div></div>
+    <div class="mcq" data-s="math"><div class="mcq-q"><div class="qt"><b>MATH</b>Two trains at 60 &amp; 40 km/h move toward each other. Relative speed?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">100 km/h</span><div class="why">Opposite directions → ADD; same direction → SUBTRACT (=20).</div></div></div></div>
+    <div class="mcq" data-s="math"><div class="mcq-q"><div class="qt"><b>MATH</b>Evaluate (BODMAS): 8 + 2 x 5</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">18</span><div class="why">Multiply first (10), then add 8.</div></div></div></div>
+    <div class="mcq" data-s="math"><div class="mcq-q"><div class="qt"><b>MATH</b>A car covers 150 km in 3 hours. Average speed?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">50 km/h</span><div class="why">Speed = Distance / Time.</div></div></div></div>
+    <div class="mcq" data-s="math"><div class="mcq-q"><div class="qt"><b>MATH</b>What is 15% of 200?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">30</span><div class="why">200 x 0.15 = 30.</div></div></div></div>
+    <div class="mcq" data-s="math"><div class="mcq-q"><div class="qt"><b>MATH</b>Divide 240 in the ratio 3 : 5.</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">90 and 150</span><div class="why">Total parts 8 → 240/8 = 30; 3x30=90, 5x30=150.</div></div></div></div>
+    <div class="mcq" data-s="math"><div class="mcq-q"><div class="qt"><b>MATH</b>If x squared = 49, then x = ?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">7 (or -7)</span><div class="why">Square root of 49.</div></div></div></div>
+    <div class="mcq" data-s="math"><div class="mcq-q"><div class="qt"><b>MATH</b>1/4 + 1/2 = ?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">3/4</span><div class="why">Common denominator 4: 1/4 + 2/4.</div></div></div></div>
+  </div>
+</section>
+
+<section class="panel" id="english">
+  <h2 class="sec"><span class="n">06</span>English — 20 marks</h2>
+  <p class="sec-intro">The biggest single MCQ block and the most rule-based: prepositions, synonyms/antonyms, one-word substitutions, and sentence correction. The same vocabulary recurs across papers — cover the right column and recall.</p>
+
+  <h3 class="blk">Fixed prepositions (LAT favourites)</h3>
+  <table class="tbl"><thead><tr><th>Word</th><th>Prep.</th><th>Example</th></tr></thead><tbody>
+    <tr><td>senior / junior</td><td><b>to</b></td><td>He is senior <b>to</b> me. (never 'than')</td></tr>
+    <tr><td>prefer</td><td><b>to</b></td><td>I prefer tea <b>to</b> coffee.</td></tr>
+    <tr><td>married</td><td><b>to</b></td><td>She is married <b>to</b> a doctor.</td></tr>
+    <tr><td>good / bad (skill)</td><td><b>at</b></td><td>She is good <b>at</b> chess.</td></tr>
+    <tr><td>good (beneficial)</td><td><b>for</b></td><td>Exercise is good <b>for</b> health.</td></tr>
+    <tr><td>angry (a person)</td><td><b>with</b></td><td>She is angry <b>with</b> me.</td></tr>
+    <tr><td>angry (a thing)</td><td><b>at</b></td><td>He was angry <b>at</b> his failure.</td></tr>
+    <tr><td>agree (a person)</td><td><b>with</b></td><td>I agree <b>with</b> you.</td></tr>
+    <tr><td>agree (a plan)</td><td><b>to</b></td><td>He agreed <b>to</b> the proposal.</td></tr>
+    <tr><td>die (disease)</td><td><b>of</b></td><td>He died <b>of</b> cancer.</td></tr>
+    <tr><td>die (external cause)</td><td><b>from</b></td><td>He died <b>from</b> his wounds.</td></tr>
+    <tr><td>depend / rely</td><td><b>on</b></td><td>It depends <b>on</b> you.</td></tr>
+    <tr><td>composed / capable</td><td><b>of</b></td><td>She is capable <b>of</b> winning.</td></tr>
+    <tr><td>famous</td><td><b>for</b></td><td>Lahore is famous <b>for</b> food.</td></tr>
+    <tr><td>afraid / fond / proud</td><td><b>of</b></td><td>He is fond <b>of</b> music.</td></tr>
+    <tr><td>congratulate</td><td><b>on</b></td><td>I congratulated him <b>on</b> success.</td></tr>
+    <tr><td>insist</td><td><b>on</b></td><td>She insisted <b>on</b> going.</td></tr>
+    <tr><td>suffer</td><td><b>from</b></td><td>He suffers <b>from</b> fever.</td></tr>
+    <tr><td>translate / divide</td><td><b>into</b></td><td>Translate it <b>into</b> Urdu.</td></tr>
+    <tr><td>superior / inferior</td><td><b>to</b></td><td>This model is superior <b>to</b> that one.</td></tr>
+    <tr><td>belong</td><td><b>to</b></td><td>This pen belongs <b>to</b> me.</td></tr>
+    <tr><td>comply</td><td><b>with</b></td><td>You must comply <b>with</b> the rules.</td></tr>
+    <tr><td>devoted / accustomed</td><td><b>to</b></td><td>She is devoted <b>to</b> her work.</td></tr>
+    <tr><td>jealous / sure / aware</td><td><b>of</b></td><td>He is jealous <b>of</b> his brother.</td></tr>
+  </tbody></table>
+
+  <h3 class="blk">IN / ON / AT quick logic</h3>
+  <div class="card">
+    <p><b style="color:var(--gold-soft)">AT</b> — precise point: <i>at 5 o'clock, at the door, at night.</i></p>
+    <p style="margin-top:8px"><b style="color:var(--gold-soft)">ON</b> — surface / specific day or date: <i>on the table, on Monday, on 14 August.</i></p>
+    <p style="margin-top:8px"><b style="color:var(--gold-soft)">IN</b> — enclosed / longer period: <i>in the room, in June, in 2026, in the morning.</i></p>
+  </div>
+
+  <h3 class="blk">Confusing pairs (the traps)</h3>
+  <table class="tbl"><thead><tr><th>Pair</th><th>Rule</th></tr></thead><tbody>
+    <tr><td><b>Between / Among</b></td><td>Between = TWO; Among = THREE+ (a group).</td></tr>
+    <tr><td><b>Beside / Besides</b></td><td>Beside = next to (place); Besides = in addition to.</td></tr>
+    <tr><td><b>During / While</b></td><td>During + noun (during the flight); While + verb (while travelling).</td></tr>
+    <tr><td><b>Fewer / Less</b></td><td>Fewer = countable (fewer books); Less = uncountable (less water).</td></tr>
+    <tr><td><b>Its / It's</b></td><td>Its = possessive; It's = 'it is'.</td></tr>
+    <tr><td><b>Lie / Lay</b></td><td>Lie = recline (no object); Lay = put down (needs an object).</td></tr>
+    <tr><td><b>Advice / Advise</b></td><td>Advice = noun; Advise = verb.</td></tr>
+    <tr><td><b>Affect / Effect</b></td><td>Affect = verb (to influence); Effect = noun (a result).</td></tr>
+  </tbody></table>
+
+  <h3 class="blk">Top 50 synonyms</h3>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 22px">
+    <table class="tbl"><thead><tr><th>Word</th><th>Means</th></tr></thead><tbody>
+    <tr><td>Candid</td><td><b>frank / honest</b></td></tr>
+    <tr><td>Courteous</td><td><b>polite</b></td></tr>
+    <tr><td>Soothe</td><td><b>calm / relieve</b></td></tr>
+    <tr><td>Shabby</td><td><b>worn / inferior</b></td></tr>
+    <tr><td>Abandon</td><td><b>leave / give up</b></td></tr>
+    <tr><td>Brisk</td><td><b>quick / lively</b></td></tr>
+    <tr><td>Diligent</td><td><b>hard-working</b></td></tr>
+    <tr><td>Lucid</td><td><b>clear</b></td></tr>
+    <tr><td>Obstinate</td><td><b>stubborn</b></td></tr>
+    <tr><td>Vivid</td><td><b>bright / clear</b></td></tr>
+    <tr><td>Sluggish</td><td><b>slow</b></td></tr>
+    <tr><td>Prudent</td><td><b>wise / careful</b></td></tr>
+    <tr><td>Augment</td><td><b>increase</b></td></tr>
+    <tr><td>Benevolent</td><td><b>kind</b></td></tr>
+    <tr><td>Concise</td><td><b>brief</b></td></tr>
+    <tr><td>Deter</td><td><b>discourage</b></td></tr>
+    <tr><td>Eloquent</td><td><b>fluent / expressive</b></td></tr>
+    <tr><td>Frugal</td><td><b>thrifty</b></td></tr>
+    <tr><td>Gregarious</td><td><b>sociable</b></td></tr>
+    <tr><td>Hostile</td><td><b>unfriendly</b></td></tr>
+    <tr><td>Imminent</td><td><b>about to happen</b></td></tr>
+    <tr><td>Jovial</td><td><b>cheerful</b></td></tr>
+    <tr><td>Keen</td><td><b>eager</b></td></tr>
+    <tr><td>Lethal</td><td><b>deadly</b></td></tr>
+    <tr><td>Meager</td><td><b>scanty</b></td></tr>
+    </tbody></table>
+    <table class="tbl"><thead><tr><th>Word</th><th>Means</th></tr></thead><tbody>
+    <tr><td>Naive</td><td><b>innocent / simple</b></td></tr>
+    <tr><td>Obscure</td><td><b>unclear</b></td></tr>
+    <tr><td>Placid</td><td><b>calm</b></td></tr>
+    <tr><td>Quaint</td><td><b>odd / old-fashioned</b></td></tr>
+    <tr><td>Rigid</td><td><b>stiff</b></td></tr>
+    <tr><td>Sane</td><td><b>sensible</b></td></tr>
+    <tr><td>Tedious</td><td><b>boring</b></td></tr>
+    <tr><td>Vague</td><td><b>unclear</b></td></tr>
+    <tr><td>Wary</td><td><b>cautious</b></td></tr>
+    <tr><td>Zeal</td><td><b>enthusiasm</b></td></tr>
+    <tr><td>Abundant</td><td><b>plentiful</b></td></tr>
+    <tr><td>Bizarre</td><td><b>strange</b></td></tr>
+    <tr><td>Crucial</td><td><b>vital</b></td></tr>
+    <tr><td>Dismal</td><td><b>gloomy</b></td></tr>
+    <tr><td>Endorse</td><td><b>support</b></td></tr>
+    <tr><td>Feeble</td><td><b>weak</b></td></tr>
+    <tr><td>Genuine</td><td><b>real</b></td></tr>
+    <tr><td>Hamper</td><td><b>hinder</b></td></tr>
+    <tr><td>Innate</td><td><b>inborn</b></td></tr>
+    <tr><td>Mitigate</td><td><b>lessen</b></td></tr>
+    <tr><td>Notorious</td><td><b>infamous</b></td></tr>
+    <tr><td>Optimum</td><td><b>best</b></td></tr>
+    <tr><td>Ponder</td><td><b>think deeply</b></td></tr>
+    <tr><td>Reluctant</td><td><b>unwilling</b></td></tr>
+    <tr><td>Vigilant</td><td><b>watchful</b></td></tr>
+    </tbody></table>
+  </div>
+
+  <h3 class="blk">High-frequency antonyms</h3>
+  <table class="tbl"><thead><tr><th>Word</th><th>Opposite</th></tr></thead><tbody>
+    <tr><td>Accept</td><td><b>Reject / Refuse</b></td></tr>
+    <tr><td>Curly</td><td><b>Straight</b></td></tr>
+    <tr><td>Calm</td><td><b>Excited / Agitated</b></td></tr>
+    <tr><td>Chief</td><td><b>Subordinate</b></td></tr>
+    <tr><td>Generous</td><td><b>Stingy / Miser</b></td></tr>
+    <tr><td>Transparent</td><td><b>Opaque</b></td></tr>
+    <tr><td>Victory</td><td><b>Defeat</b></td></tr>
+    <tr><td>Expand</td><td><b>Contract</b></td></tr>
+    <tr><td>Permanent</td><td><b>Temporary</b></td></tr>
+    <tr><td>Humble</td><td><b>Arrogant</b></td></tr>
+    <tr><td>Brave</td><td><b>Coward</b></td></tr>
+    <tr><td>Ancient</td><td><b>Modern</b></td></tr>
+    <tr><td>Artificial</td><td><b>Natural</b></td></tr>
+    <tr><td>Barren</td><td><b>Fertile</b></td></tr>
+    <tr><td>Cruel</td><td><b>Kind</b></td></tr>
+    <tr><td>Dense</td><td><b>Sparse</b></td></tr>
+    <tr><td>Expensive</td><td><b>Cheap</b></td></tr>
+    <tr><td>Frequent</td><td><b>Rare</b></td></tr>
+    <tr><td>Guilty</td><td><b>Innocent</b></td></tr>
+    <tr><td>Include</td><td><b>Exclude</b></td></tr>
+    <tr><td>Liberty</td><td><b>Slavery</b></td></tr>
+    <tr><td>Maximum</td><td><b>Minimum</b></td></tr>
+    <tr><td>Optimist</td><td><b>Pessimist</b></td></tr>
+    <tr><td>Praise</td><td><b>Blame</b></td></tr>
+    <tr><td>Bold</td><td><b>Timid</b></td></tr>
+  </tbody></table>
+
+  <h3 class="blk">One-word substitutions</h3>
+  <table class="tbl"><thead><tr><th>Phrase</th><th>Word</th></tr></thead><tbody>
+    <tr><td>One who studies stars</td><td><b>Astronomer</b></td></tr>
+    <tr><td>One who cannot read or write</td><td><b>Illiterate</b></td></tr>
+    <tr><td>A person who travels on foot</td><td><b>Pedestrian</b></td></tr>
+    <tr><td>Government by the people</td><td><b>Democracy</b></td></tr>
+    <tr><td>One who knows many languages</td><td><b>Polyglot</b></td></tr>
+    <tr><td>A doctor who treats animals</td><td><b>Veterinarian</b></td></tr>
+    <tr><td>A speech made without preparation</td><td><b>Extempore</b></td></tr>
+    <tr><td>Life story written by oneself</td><td><b>Autobiography</b></td></tr>
+    <tr><td>One who hates mankind</td><td><b>Misanthrope</b></td></tr>
+    <tr><td>A medicine that counteracts poison</td><td><b>Antidote</b></td></tr>
+    <tr><td>One who collects coins</td><td><b>Numismatist</b></td></tr>
+    <tr><td>Fear of enclosed spaces</td><td><b>Claustrophobia</b></td></tr>
+    <tr><td>A place where birds are kept</td><td><b>Aviary</b></td></tr>
+    <tr><td>One who walks in sleep</td><td><b>Somnambulist</b></td></tr>
+    <tr><td>That which cannot be believed</td><td><b>Incredible</b></td></tr>
+  </tbody></table>
+
+  <h3 class="blk">Sentence-correction rules that recur</h3>
+  <div class="card">
+    <p><b style="color:var(--gold-soft)">1.</b> Subject-verb agreement: a singular subject takes a singular verb. <i>One of the boys <b>is</b> absent.</i></p>
+    <p style="margin-top:8px"><b style="color:var(--gold-soft)">2.</b> 'Either...or / Neither...nor': verb agrees with the <b>nearer</b> subject. <i>Neither he nor his friends <b>were</b> there.</i></p>
+    <p style="margin-top:8px"><b style="color:var(--gold-soft)">3.</b> After 'did / does / do', use the <b>base verb</b>. <i>He did not <b>go</b> (not 'went').</i></p>
+    <p style="margin-top:8px"><b style="color:var(--gold-soft)">4.</b> 'Lest' is followed by 'should'. <i>Work hard <b>lest</b> you <b>should</b> fail.</i></p>
+    <p style="margin-top:8px"><b style="color:var(--gold-soft)">5.</b> Two singular nouns joined by 'and' take a plural verb; if they refer to one thing, singular. <i>Bread and butter <b>is</b> my breakfast.</i></p>
+  </div>
+
+  <div class="card" style="margin-top:14px">
+    <div class="chk"><input type="checkbox" data-k="en1"><span class="chk-txt">Recalled the full fixed-prepositions table</span></div>
+    <div class="chk"><input type="checkbox" data-k="en2"><span class="chk-txt">Drilled IN/ON/AT + all confusing pairs</span></div>
+    <div class="chk"><input type="checkbox" data-k="en3"><span class="chk-txt">Recalled top-50 synonyms &amp; antonyms both directions</span></div>
+    <div class="chk"><input type="checkbox" data-k="en4"><span class="chk-txt">Memorized one-word substitutions + the 5 grammar rules</span></div>
+  </div>
+</section>
+
+<section class="panel" id="urdu">
+  <h2 class="sec"><span class="n">07</span>Urdu — 10 marks</h2>
+  <p class="sec-intro">The muhawarat / zarb-ul-amsal section is where most students bleed marks — yet the same idioms cycle through papers. Then come متضاد (antonyms), واحد/جمع (singular-plural), and مذکر/مؤنث (gender). Cover the meaning, recall it from the idiom.</p>
+
+<h3 class="blk">50 most-repeated muhawarat & zarb-ul-amsal</h3>
+
+  <div class="muh"><div class="muh-row"><div class="ur">آستین کا سانپ</div><div class="mn"><span class="rom">aasteen ka saanp</span>چھپا ہوا دشمن</div></div></div>
+  <div class="muh"><div class="muh-row"><div class="ur">آنکھ کا تارا</div><div class="mn"><span class="rom">aankh ka taara</span>بہت پیارا / محبوب</div></div></div>
+  <div class="muh"><div class="muh-row"><div class="ur">آنکھیں بچھانا</div><div class="mn"><span class="rom">aankhen bichhana</span>عزت سے استقبال کرنا</div></div></div>
+  <div class="muh"><div class="muh-row"><div class="ur">آنکھوں میں دھول جھونکنا</div><div class="mn"><span class="rom">aankhon mein dhool jhonkna</span>دھوکا دینا</div></div></div>
+  <div class="muh"><div class="muh-row"><div class="ur">آگ بگولا ہونا</div><div class="mn"><span class="rom">aag bagola hona</span>سخت غصے میں آنا</div></div></div>
+  <div class="muh"><div class="muh-row"><div class="ur">اپنا الو سیدھا کرنا</div><div class="mn"><span class="rom">apna ullu seedha karna</span>اپنا مطلب نکالنا</div></div></div>
+  <div class="muh"><div class="muh-row"><div class="ur">اپنے منہ میاں مٹھو بننا</div><div class="mn"><span class="rom">apne munh miyan mitthu</span>خود اپنی تعریف کرنا</div></div></div>
+  <div class="muh"><div class="muh-row"><div class="ur">اونٹ کے منہ میں زیرہ</div><div class="mn"><span class="rom">oont ke munh mein zeera</span>ضرورت سے بہت کم</div></div></div>
+  <div class="muh"><div class="muh-row"><div class="ur">ایک انار سو بیمار</div><div class="mn"><span class="rom">aik anaar sau beemaar</span>چیز کم، چاہنے والے زیادہ</div></div></div>
+  <div class="muh"><div class="muh-row"><div class="ur">ایک تیر سے دو شکار</div><div class="mn"><span class="rom">aik teer se do shikaar</span>ایک کام سے دو فائدے</div></div></div>
+  <div class="muh"><div class="muh-row"><div class="ur">اندھے کے ہاتھ بٹیر لگنا</div><div class="mn"><span class="rom">andhe ke haath bater</span>اتفاق سے کامیابی ملنا</div></div></div>
+  <div class="muh"><div class="muh-row"><div class="ur">بغلیں بجانا</div><div class="mn"><span class="rom">baghlen bajana</span>بہت خوش ہونا</div></div></div>
+  <div class="muh"><div class="muh-row"><div class="ur">بال کی کھال نکالنا</div><div class="mn"><span class="rom">baal ki khaal nikalna</span>بہت باریکی سے جانچنا / نکتہ چینی</div></div></div>
+  <div class="muh"><div class="muh-row"><div class="ur">بندر کیا جانے ادرک کا سواد</div><div class="mn"><span class="rom">bandar kya jaane adrak</span>ناقدر کو قدر نہیں ہوتی</div></div></div>
+  <div class="muh"><div class="muh-row"><div class="ur">تل دھرنے کی جگہ نہ ہونا</div><div class="mn"><span class="rom">til dharne ki jagah</span>بہت ہجوم ہونا</div></div></div>
+  <div class="muh"><div class="muh-row"><div class="ur">تھوک کر چاٹنا</div><div class="mn"><span class="rom">thook kar chaatna</span>کہہ کر مکر جانا</div></div></div>
+  <div class="muh"><div class="muh-row"><div class="ur">جس کی لاٹھی اس کی بھینس</div><div class="mn"><span class="rom">jis ki laathi us ki bhains</span>طاقتور کی ہی چلتی ہے</div></div></div>
+  <div class="muh"><div class="muh-row"><div class="ur">جلتی پر تیل ڈالنا</div><div class="mn"><span class="rom">jalti par tel daalna</span>جھگڑے کو اور بڑھانا</div></div></div>
+  <div class="muh"><div class="muh-row"><div class="ur">چراغ تلے اندھیرا</div><div class="mn"><span class="rom">charaagh tale andhera</span>قریب کی چیز نظر نہ آنا</div></div></div>
+  <div class="muh"><div class="muh-row"><div class="ur">چور کی داڑھی میں تنکا</div><div class="mn"><span class="rom">chor ki daarhi mein tinka</span>مجرم کا خود کو ظاہر کر دینا</div></div></div>
+  <div class="muh"><div class="muh-row"><div class="ur">دال میں کالا ہونا</div><div class="mn"><span class="rom">daal mein kaala</span>کچھ گڑبڑ یا شک ہونا</div></div></div>
+  <div class="muh"><div class="muh-row"><div class="ur">دن دگنی رات چوگنی ترقی</div><div class="mn"><span class="rom">din dugni raat chaugni</span>بہت تیزی سے ترقی</div></div></div>
+  <div class="muh"><div class="muh-row"><div class="ur">دودھ کا دودھ پانی کا پانی</div><div class="mn"><span class="rom">doodh ka doodh</span>صاف انصاف، حق و باطل الگ</div></div></div>
+  <div class="muh"><div class="muh-row"><div class="ur">دیوار کے بھی کان ہوتے ہیں</div><div class="mn"><span class="rom">deewaar ke bhi kaan</span>راز فاش ہونے کا خطرہ</div></div></div>
+  <div class="muh"><div class="muh-row"><div class="ur">دم توڑنا</div><div class="mn"><span class="rom">dam todna</span>مرنے کے قریب ہونا / ختم ہونا</div></div></div>
+  <div class="muh"><div class="muh-row"><div class="ur">عقل کا اندھا</div><div class="mn"><span class="rom">aqal ka andha</span>سخت بے وقوف</div></div></div>
+  <div class="muh"><div class="muh-row"><div class="ur">عقل پر پتھر پڑنا</div><div class="mn"><span class="rom">aqal par patthar</span>سمجھ بوجھ ختم ہو جانا</div></div></div>
+  <div class="muh"><div class="muh-row"><div class="ur">کان کترنا</div><div class="mn"><span class="rom">kaan katarna</span>بہت چالاک / تیز ہونا</div></div></div>
+  <div class="muh"><div class="muh-row"><div class="ur">کانوں کان خبر نہ ہونا</div><div class="mn"><span class="rom">kaanon kaan khabar na</span>بالکل پتا نہ چلنا</div></div></div>
+  <div class="muh"><div class="muh-row"><div class="ur">کھودا پہاڑ نکلا چوہا</div><div class="mn"><span class="rom">khoda pahaad nikla chooha</span>محنت زیادہ، فائدہ کم</div></div></div>
+  <div class="muh"><div class="muh-row"><div class="ur">کلیجہ ٹھنڈا ہونا</div><div class="mn"><span class="rom">kaleja thanda hona</span>اطمینان و سکون ملنا</div></div></div>
+  <div class="muh"><div class="muh-row"><div class="ur">گھر کا بھیدی لنکا ڈھائے</div><div class="mn"><span class="rom">ghar ka bhedi lanka</span>اندر کا آدمی نقصان پہنچاتا ہے</div></div></div>
+  <div class="muh"><div class="muh-row"><div class="ur">لوہے کے چنے چبانا</div><div class="mn"><span class="rom">lohe ke chane chabana</span>بہت مشکل کام کرنا</div></div></div>
+  <div class="muh"><div class="muh-row"><div class="ur">منہ میں پانی بھر آنا</div><div class="mn"><span class="rom">munh mein paani</span>لالچ یا خواہش پیدا ہونا</div></div></div>
+  <div class="muh"><div class="muh-row"><div class="ur">ناچ نہ جانے آنگن ٹیڑھا</div><div class="mn"><span class="rom">naach na jaane aangan</span>اپنی کمی دوسروں پر ڈالنا</div></div></div>
+  <div class="muh"><div class="muh-row"><div class="ur">ناک کا بال ہونا</div><div class="mn"><span class="rom">naak ka baal hona</span>بہت عزیز و قریبی ہونا</div></div></div>
+  <div class="muh"><div class="muh-row"><div class="ur">نو دو گیارہ ہونا</div><div class="mn"><span class="rom">nau do gyarah hona</span>بھاگ جانا / فرار ہونا</div></div></div>
+  <div class="muh"><div class="muh-row"><div class="ur">نیم حکیم خطرہ جان</div><div class="mn"><span class="rom">neem hakeem khatra jaan</span>ادھورا علم نقصان دہ ہے</div></div></div>
+  <div class="muh"><div class="muh-row"><div class="ur">ہاتھ ملتے رہ جانا</div><div class="mn"><span class="rom">haath malte reh jana</span>پچھتانا</div></div></div>
+  <div class="muh"><div class="muh-row"><div class="ur">ہاتھی کے دانت کھانے کے اور دکھانے کے اور</div><div class="mn"><span class="rom">haathi ke daant</span>دکھاوا، ظاہر و باطن میں فرق</div></div></div>
+  <div class="muh"><div class="muh-row"><div class="ur">سو سنار کی، ایک لوہار کی</div><div class="mn"><span class="rom">sau sunaar ki ek lohaar</span>طاقتور کی ایک ضرب کئی کمزور وار پر بھاری</div></div></div>
+  <div class="muh"><div class="muh-row"><div class="ur">سانپ بھی مر جائے لاٹھی بھی نہ ٹوٹے</div><div class="mn"><span class="rom">saanp bhi mar jaye</span>نقصان کے بغیر کام نکالنا</div></div></div>
+  <div class="muh"><div class="muh-row"><div class="ur">سر دھڑ کی بازی لگانا</div><div class="mn"><span class="rom">sar dhad ki baazi</span>جان کی پروا نہ کرنا</div></div></div>
+  <div class="muh"><div class="muh-row"><div class="ur">سر آنکھوں پر بٹھانا</div><div class="mn"><span class="rom">sar aankhon par</span>بہت عزت دینا</div></div></div>
+  <div class="muh"><div class="muh-row"><div class="ur">صبر کا پھل میٹھا ہوتا ہے</div><div class="mn"><span class="rom">sabar ka phal meetha</span>صبر کا اچھا نتیجہ نکلتا ہے</div></div></div>
+  <div class="muh"><div class="muh-row"><div class="ur">ذرہ نوازی</div><div class="mn"><span class="rom">zarra nawazi</span>مہربانی / عنایت</div></div></div>
+  <div class="muh"><div class="muh-row"><div class="ur">دامن چھڑانا</div><div class="mn"><span class="rom">daaman chhudana</span>پیچھا چھڑانا</div></div></div>
+  <div class="muh"><div class="muh-row"><div class="ur">جسے اللہ رکھے اسے کون چکھے</div><div class="mn"><span class="rom">jise Allah rakhe</span>اللہ کی حفاظت کو کوئی نقصان نہیں پہنچا سکتا</div></div></div>
+  <div class="muh"><div class="muh-row"><div class="ur">روئی کی طرح دھننا</div><div class="mn"><span class="rom">rooi ki tarah dhunna</span>بری طرح مارنا</div></div></div>
+  <div class="muh"><div class="muh-row"><div class="ur">آب آب ہونا</div><div class="mn"><span class="rom">aab aab hona</span>شرمندہ ہو جانا</div></div></div>
+
+  
+  <div class="note" style="margin-top:16px"><b>Also drill below:</b> the high-frequency متضاد، واحد/جمع، and مذکر/مؤنث tables — each carries easy marks.</div>
+
+  <h3 class="blk">متضاد الفاظ — Antonyms</h3>
+  <table class="tbl"><thead><tr><th style="text-align:right">لفظ</th><th style="text-align:right">متضاد</th></tr></thead><tbody>
+    <tr><td class="urdu" style="font-size:1.15rem;direction:rtl;text-align:right">امیر</td><td class="urdu" style="font-size:1.15rem;direction:rtl;text-align:right">غریب</td></tr>
+    <tr><td class="urdu" style="font-size:1.15rem;direction:rtl;text-align:right">دوست</td><td class="urdu" style="font-size:1.15rem;direction:rtl;text-align:right">دشمن</td></tr>
+    <tr><td class="urdu" style="font-size:1.15rem;direction:rtl;text-align:right">روشنی</td><td class="urdu" style="font-size:1.15rem;direction:rtl;text-align:right">اندھیرا</td></tr>
+    <tr><td class="urdu" style="font-size:1.15rem;direction:rtl;text-align:right">دن</td><td class="urdu" style="font-size:1.15rem;direction:rtl;text-align:right">رات</td></tr>
+    <tr><td class="urdu" style="font-size:1.15rem;direction:rtl;text-align:right">سچ</td><td class="urdu" style="font-size:1.15rem;direction:rtl;text-align:right">جھوٹ</td></tr>
+    <tr><td class="urdu" style="font-size:1.15rem;direction:rtl;text-align:right">نیکی</td><td class="urdu" style="font-size:1.15rem;direction:rtl;text-align:right">بدی</td></tr>
+    <tr><td class="urdu" style="font-size:1.15rem;direction:rtl;text-align:right">آسان</td><td class="urdu" style="font-size:1.15rem;direction:rtl;text-align:right">مشکل</td></tr>
+    <tr><td class="urdu" style="font-size:1.15rem;direction:rtl;text-align:right">خوشی</td><td class="urdu" style="font-size:1.15rem;direction:rtl;text-align:right">غم</td></tr>
+    <tr><td class="urdu" style="font-size:1.15rem;direction:rtl;text-align:right">جیت</td><td class="urdu" style="font-size:1.15rem;direction:rtl;text-align:right">ہار</td></tr>
+    <tr><td class="urdu" style="font-size:1.15rem;direction:rtl;text-align:right">علم</td><td class="urdu" style="font-size:1.15rem;direction:rtl;text-align:right">جہالت</td></tr>
+    <tr><td class="urdu" style="font-size:1.15rem;direction:rtl;text-align:right">آباد</td><td class="urdu" style="font-size:1.15rem;direction:rtl;text-align:right">برباد</td></tr>
+    <tr><td class="urdu" style="font-size:1.15rem;direction:rtl;text-align:right">ظالم</td><td class="urdu" style="font-size:1.15rem;direction:rtl;text-align:right">مظلوم</td></tr>
+    <tr><td class="urdu" style="font-size:1.15rem;direction:rtl;text-align:right">حلال</td><td class="urdu" style="font-size:1.15rem;direction:rtl;text-align:right">حرام</td></tr>
+    <tr><td class="urdu" style="font-size:1.15rem;direction:rtl;text-align:right">فائدہ</td><td class="urdu" style="font-size:1.15rem;direction:rtl;text-align:right">نقصان</td></tr>
+    <tr><td class="urdu" style="font-size:1.15rem;direction:rtl;text-align:right">آغاز</td><td class="urdu" style="font-size:1.15rem;direction:rtl;text-align:right">انجام</td></tr>
+  </tbody></table>
+
+  <h3 class="blk">واحد / جمع — Singular &amp; Plural</h3>
+  <table class="tbl"><thead><tr><th style="text-align:right">واحد</th><th style="text-align:right">جمع</th></tr></thead><tbody>
+    <tr><td class="urdu" style="font-size:1.15rem;direction:rtl;text-align:right">کتاب</td><td class="urdu" style="font-size:1.15rem;direction:rtl;text-align:right">کتب</td></tr>
+    <tr><td class="urdu" style="font-size:1.15rem;direction:rtl;text-align:right">قلم</td><td class="urdu" style="font-size:1.15rem;direction:rtl;text-align:right">اقلام</td></tr>
+    <tr><td class="urdu" style="font-size:1.15rem;direction:rtl;text-align:right">خبر</td><td class="urdu" style="font-size:1.15rem;direction:rtl;text-align:right">اخبار</td></tr>
+    <tr><td class="urdu" style="font-size:1.15rem;direction:rtl;text-align:right">علم</td><td class="urdu" style="font-size:1.15rem;direction:rtl;text-align:right">علوم</td></tr>
+    <tr><td class="urdu" style="font-size:1.15rem;direction:rtl;text-align:right">حال</td><td class="urdu" style="font-size:1.15rem;direction:rtl;text-align:right">احوال</td></tr>
+    <tr><td class="urdu" style="font-size:1.15rem;direction:rtl;text-align:right">شے</td><td class="urdu" style="font-size:1.15rem;direction:rtl;text-align:right">اشیاء</td></tr>
+    <tr><td class="urdu" style="font-size:1.15rem;direction:rtl;text-align:right">رکن</td><td class="urdu" style="font-size:1.15rem;direction:rtl;text-align:right">ارکان</td></tr>
+    <tr><td class="urdu" style="font-size:1.15rem;direction:rtl;text-align:right">حق</td><td class="urdu" style="font-size:1.15rem;direction:rtl;text-align:right">حقوق</td></tr>
+    <tr><td class="urdu" style="font-size:1.15rem;direction:rtl;text-align:right">نقطہ</td><td class="urdu" style="font-size:1.15rem;direction:rtl;text-align:right">نقاط</td></tr>
+    <tr><td class="urdu" style="font-size:1.15rem;direction:rtl;text-align:right">استاد</td><td class="urdu" style="font-size:1.15rem;direction:rtl;text-align:right">اساتذہ</td></tr>
+    <tr><td class="urdu" style="font-size:1.15rem;direction:rtl;text-align:right">طالبِ علم</td><td class="urdu" style="font-size:1.15rem;direction:rtl;text-align:right">طلبہ</td></tr>
+    <tr><td class="urdu" style="font-size:1.15rem;direction:rtl;text-align:right">ملک</td><td class="urdu" style="font-size:1.15rem;direction:rtl;text-align:right">ممالک</td></tr>
+  </tbody></table>
+
+  <h3 class="blk">مذکر / مؤنث — Masculine &amp; Feminine</h3>
+  <table class="tbl"><thead><tr><th style="text-align:right">مذکر</th><th style="text-align:right">مؤنث</th></tr></thead><tbody>
+    <tr><td class="urdu" style="font-size:1.15rem;direction:rtl;text-align:right">لڑکا</td><td class="urdu" style="font-size:1.15rem;direction:rtl;text-align:right">لڑکی</td></tr>
+    <tr><td class="urdu" style="font-size:1.15rem;direction:rtl;text-align:right">شیر</td><td class="urdu" style="font-size:1.15rem;direction:rtl;text-align:right">شیرنی</td></tr>
+    <tr><td class="urdu" style="font-size:1.15rem;direction:rtl;text-align:right">استاد</td><td class="urdu" style="font-size:1.15rem;direction:rtl;text-align:right">استانی</td></tr>
+    <tr><td class="urdu" style="font-size:1.15rem;direction:rtl;text-align:right">گھوڑا</td><td class="urdu" style="font-size:1.15rem;direction:rtl;text-align:right">گھوڑی</td></tr>
+    <tr><td class="urdu" style="font-size:1.15rem;direction:rtl;text-align:right">مرد</td><td class="urdu" style="font-size:1.15rem;direction:rtl;text-align:right">عورت</td></tr>
+    <tr><td class="urdu" style="font-size:1.15rem;direction:rtl;text-align:right">باپ</td><td class="urdu" style="font-size:1.15rem;direction:rtl;text-align:right">ماں</td></tr>
+    <tr><td class="urdu" style="font-size:1.15rem;direction:rtl;text-align:right">بھائی</td><td class="urdu" style="font-size:1.15rem;direction:rtl;text-align:right">بہن</td></tr>
+    <tr><td class="urdu" style="font-size:1.15rem;direction:rtl;text-align:right">نوکر</td><td class="urdu" style="font-size:1.15rem;direction:rtl;text-align:right">نوکرانی</td></tr>
+  </tbody></table>
+
+  <div class="card" style="margin-top:8px">
+    <div class="chk"><input type="checkbox" data-k="ur1"><span class="chk-txt">Recalled all 50 muhawarat (meaning column covered)</span></div>
+    <div class="chk"><input type="checkbox" data-k="ur2"><span class="chk-txt">Reviewed متضاد table</span></div>
+    <div class="chk"><input type="checkbox" data-k="ur3"><span class="chk-txt">Reviewed واحد/جمع + مذکر/مؤنث tables</span></div>
+  </div>
+</section>
+
+<section class="panel" id="resources">
+  <h2 class="sec"><span class="n">08</span>Resources</h2>
+  <p class="sec-intro">Official-first, then high-quality free practice. Always cross-check the schedule and weightages on the HEC site itself — third-party pages occasionally list outdated mark splits (e.g. Islamiat as 20 — it is <b>10</b>).</p>
+
+  <h3 class="blk">Official HEC (use these first)</h3>
+  <div class="card res-group"><ul class="res-list">
+    <li><span class="rt"><a href="http://etc.hec.gov.pk" target="_blank" rel="noopener">HEC ETC Portal — registration, roll-number slip & result</a><span class="badge off">Official</span></span><span class="rd">Roll slips for LAT-3 issue ~11 June; download here. Result expected 3 Aug.</span></li>
+    <li><span class="rt"><a href="https://www.hec.gov.pk/english/HECAnnouncements/Documents/Content%20Weightages%20for%20HEC%20Law%20Admission%20Test%20LAT.pdf" target="_blank" rel="noopener">Official Content Weightages (LAT) — PDF</a><span class="badge off">Official</span></span><span class="rd">The authoritative mark split: English 20, GK 20, Islamiat 10, Pak St 10, Urdu 10, Math 5, Essay 15, PS 10.</span></li>
+    <li><span class="rt"><a href="https://www.hec.gov.pk/english/HECAnnouncements/Documents/Sample%20Personal%20Statement%20Writing%20Law%20Admission%20Test%20LAT.pdf" target="_blank" rel="noopener">HEC Sample Personal Statement — PDF</a><span class="badge off">Official</span></span><span class="rd">See exactly what the examiner expects from the 10-mark PS.</span></li>
+    <li><span class="rt"><a href="https://www.hec.gov.pk/english/services/students/etc/Pages/default.aspx" target="_blank" rel="noopener">HEC Education Testing Council (ETC) home</a><span class="badge off">Official</span></span><span class="rd">Test calendar, instructions, and contact for all HEC tests.</span></li>
+  </ul></div>
+
+  <h3 class="blk">Past papers & solved MCQs</h3>
+  <div class="card res-group"><ul class="res-list">
+    <li><span class="rt"><a href="https://pastpaperspdf.com/all-hec-lat-law-admission-test-syllabus-past-papers-free-pdf/" target="_blank" rel="noopener">LAT past papers 2018–2026 + syllabus (free PDF)</a><span class="badge free">Free</span></span><span class="rd">Subject-wise solved papers — your mock-test fuel for Days 15 & 18.</span></li>
+    <li><span class="rt"><a href="https://testpoint.pk/paper-mcqs/504/law-admission-test-(lat)-syllabus-2025" target="_blank" rel="noopener">TestPoint — LAT syllabus & online MCQ practice</a><span class="badge free">Free</span></span><span class="rd">Click-to-check MCQ practice across all subjects (verify mark split against HEC).</span></li>
+    <li><span class="rt"><a href="https://mcqstestprep.com/lat-test-preparation-mcqs-2024/" target="_blank" rel="noopener">MCQs Test Prep — LAT subject MCQs & past papers</a><span class="badge free">Free</span></span><span class="rd">Topic-wise repeated MCQs with answers.</span></li>
+    <li><span class="rt"><a href="https://lawadmissiontest.com.pk/essay-topics-for-law-admission-test/" target="_blank" rel="noopener">50+ LAT essay topics (downloadable)</a><span class="badge free">Free</span></span><span class="rd">Wide topic list for picking your practice prompts.</span></li>
+  </ul></div>
+
+  <h3 class="blk">Strategy, templates & schedule</h3>
+  <div class="card res-group"><ul class="res-list">
+    <li><span class="rt"><a href="https://lat360.pk/top-expected-essay-topics-for-lat" target="_blank" rel="noopener">Top 20 expected essay topics 2026 (LAT360)</a></span><span class="rd">Frequency-based theme list used to build the essay buckets in this guide.</span></li>
+    <li><span class="rt"><a href="https://lat360.pk/mastering-lat-personal-statement" target="_blank" rel="noopener">Mastering the LAT personal statement (LAT360)</a></span><span class="rd">3-paragraph PS structure with right-vs-wrong examples.</span></li>
+    <li><span class="rt"><a href="https://lat360.pk/lat-exam-dates-2026-schedule" target="_blank" rel="noopener">LAT 2026 exam dates & registration guide</a></span><span class="rd">Full-year calendar; LAT-3 test day = Sun 21 June 2026.</span></li>
+    <li><span class="rt"><a href="https://testpreparation.pk/urdu-proverbs-zarb-ul-amsaal/" target="_blank" rel="noopener">Urdu Zarb-ul-Amsal practice (PDF)</a><span class="badge free">Free</span></span><span class="rd">Extra muhawarat drawn from past papers, beyond the 50 here.</span></li>
+  </ul></div>
+
+  <div class="warn"><b>One caution on accuracy:</b> some prep sites still publish a 110-mark or "Islamiat 20" pattern from older cycles. The HEC weightages PDF above is the only one to trust — Islamiat is 10, GK is 20, total is 100.</div>
+
+  <button class="reset" id="resetBtn">↺ Reset all progress</button>
+</section>
+
+</main>
+
+<footer>
+  Built for LAT-3 · 21 June 2026 &nbsp;·&nbsp; Tick boxes save to this browser &nbsp;·&nbsp; Verify dates on HEC ETC before exam day
+</footer>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---- TABS ---- */
+  var tabBtns = document.querySelectorAll('.tab-btn');
+  var panels = document.querySelectorAll('.panel');
+  tabBtns.forEach(function(btn){
+    btn.addEventListener('click', function(){
+      tabBtns.forEach(function(b){b.classList.remove('active');});
+      panels.forEach(function(p){p.classList.remove('active');});
+      btn.classList.add('active');
+      var el = document.getElementById(btn.dataset.t);
+      if(el) el.classList.add('active');
+      window.scrollTo({top:0, behavior:'smooth'});
+    });
+  });
+
+  /* ---- COUNTDOWN ---- */
+  var target = new Date('2026-06-21T09:00:00+05:00').getTime();
+  var elD=document.getElementById('cd-d'),elH=document.getElementById('cd-h'),
+      elM=document.getElementById('cd-m'),elS=document.getElementById('cd-s'),
+      note=document.getElementById('cd-note');
+  function pad(n){return (n<10?'0':'')+n;}
+  function tick(){
+    var diff = target - Date.now();
+    if(diff<=0){
+      elD.textContent='00';elH.textContent='00';elM.textContent='00';elS.textContent='00';
+      note.textContent='▸ It\u2019s exam time — trust your prep. You\u2019ve got this.';
+      return;
+    }
+    var d=Math.floor(diff/86400000);
+    var h=Math.floor(diff%86400000/3600000);
+    var m=Math.floor(diff%3600000/60000);
+    var s=Math.floor(diff%60000/1000);
+    elD.textContent=pad(d);elH.textContent=pad(h);elM.textContent=pad(m);elS.textContent=pad(s);
+  }
+  tick(); setInterval(tick,1000);
+
+  /* ---- MCQ reveal ---- */
+  document.querySelectorAll('.mcq-q').forEach(function(q){
+    q.addEventListener('click', function(){
+      q.parentElement.classList.toggle('open');
+    });
+  });
+
+  /* ---- MCQ filter ---- */
+  var fbtns=document.querySelectorAll('.fbtn');
+  fbtns.forEach(function(b){
+    b.addEventListener('click', function(){
+      fbtns.forEach(function(x){x.classList.remove('on');});
+      b.classList.add('on');
+      var f=b.dataset.f;
+      document.querySelectorAll('#mcq-list .mcq').forEach(function(m){
+        m.style.display=(f==='all'||m.dataset.s===f)?'block':'none';
+      });
+    });
+  });
+
+  /* ---- PROGRESS + persistence (graceful if storage blocked) ---- */
+  var KEY='lat2026_progress_v1';
+  var store={};
+  try{ var raw=localStorage.getItem(KEY); if(raw) store=JSON.parse(raw)||{}; }catch(e){ store={}; }
+  function save(){ try{ localStorage.setItem(KEY, JSON.stringify(store)); }catch(e){} }
+
+  var boxes=document.querySelectorAll('input[type="checkbox"][data-k]');
+  var fill=document.getElementById('prog-fill'), pct=document.getElementById('prog-pct');
+  function refresh(){
+    var done=0;
+    boxes.forEach(function(b){ if(b.checked) done++; });
+    var p = boxes.length ? Math.round(done/boxes.length*100) : 0;
+    fill.style.width=p+'%';
+    pct.textContent=p+'%';
+  }
+  boxes.forEach(function(b){
+    var k=b.dataset.k;
+    if(store[k]) b.checked=true;
+    b.addEventListener('change', function(){
+      store[k]=b.checked; save(); refresh();
+    });
+  });
+  refresh();
+
+  document.getElementById('resetBtn').addEventListener('click', function(){
+    if(confirm('Clear all ticked progress in this browser?')){
+      store={}; save();
+      boxes.forEach(function(b){b.checked=false;});
+      refresh();
+    }
+  });
+})();
+</script>
+</body>
+</html>
