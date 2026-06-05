@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LAT 2026 — Command Center · June 21 Sprint</title>
+<title>LAT 2026 Command Center · June 21 Sprint</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,900;1,9..144,500&family=Spectral:wght@300;400;500;600&family=JetBrains+Mono:wght@400;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet">
@@ -26,7 +26,7 @@
     --urdu:'Noto Nastaliq Urdu',serif;
   }
   *{box-sizing:border-box;margin:0;padding:0}
-  html{scroll-behavior:smooth}
+  html{scroll-behavior:smooth;font-size:18px}
   body{
     background:
       radial-gradient(circle at 12% 8%, rgba(232,176,66,.07), transparent 38%),
@@ -34,8 +34,8 @@
       var(--ink);
     color:var(--parchment);
     font-family:var(--body);
-    line-height:1.6;
-    font-size:17px;
+    line-height:1.68;
+    font-size:1.04rem;
     min-height:100vh;
     -webkit-font-smoothing:antialiased;
   }
@@ -54,7 +54,7 @@
   .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.32em;text-transform:uppercase;color:var(--teal)}
   h1{font-family:var(--display);font-weight:900;font-size:clamp(2.1rem,6vw,3.6rem);line-height:1.02;letter-spacing:-.02em;margin:8px 0 4px}
   h1 .accent{color:var(--gold);font-style:italic;font-weight:500}
-  .subhead{color:var(--muted);font-size:.95rem;max-width:640px;margin:6px auto 0}
+  .subhead{color:var(--muted);font-size:1.02rem;max-width:660px;margin:8px auto 0;line-height:1.55}
 
   /* ---------- COUNTDOWN ---------- */
   .countdown{
@@ -85,9 +85,9 @@
   }
   nav.tabs::-webkit-scrollbar{display:none}
   .tab-btn{
-    font-family:var(--mono);font-size:13px;letter-spacing:.06em;
+    font-family:var(--mono);font-size:14px;letter-spacing:.06em;
     color:var(--muted);background:transparent;border:1px solid transparent;
-    padding:9px 15px;border-radius:9px;cursor:pointer;white-space:nowrap;transition:.18s;
+    padding:11px 17px;border-radius:9px;cursor:pointer;white-space:nowrap;transition:.18s;
   }
   .tab-btn:hover{color:var(--parchment);background:var(--ink-2)}
   .tab-btn.active{color:var(--ink);background:var(--gold);font-weight:700}
@@ -100,7 +100,7 @@
 
   h2.sec{font-family:var(--display);font-weight:600;font-size:clamp(1.5rem,4vw,2.1rem);letter-spacing:-.01em;margin:6px 0 4px}
   h2.sec .n{font-family:var(--mono);font-size:.8rem;color:var(--teal);vertical-align:super;margin-right:8px}
-  .sec-intro{color:var(--muted);margin-bottom:24px;font-size:.98rem}
+  .sec-intro{color:var(--muted);margin-bottom:24px;font-size:1.05rem;line-height:1.6}
   h3.blk{font-family:var(--display);font-weight:600;font-size:1.25rem;color:var(--gold-soft);margin:30px 0 12px;display:flex;align-items:center;gap:10px}
   h3.blk::before{content:"";width:22px;height:2px;background:var(--gold);display:inline-block}
 
@@ -132,7 +132,7 @@
   .chk input:checked::after{content:"✓";position:absolute;color:var(--ink);font-weight:900;font-size:13px;top:-1px;left:3px}
   .chk input:checked ~ .chk-txt{color:var(--muted);text-decoration:line-through;text-decoration-color:rgba(140,155,181,.5)}
   .chk-txt{flex:1;transition:.15s}
-  .chk-txt small{display:block;color:var(--muted);font-size:.82rem;text-decoration:none}
+  .chk-txt small{display:block;color:var(--muted);font-size:.9rem;text-decoration:none;line-height:1.5;margin-top:2px}
 
   /* day plan */
   .week-head{font-family:var(--mono);font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--teal);margin:26px 0 4px}
@@ -144,7 +144,7 @@
   .day .d-body{padding:12px 16px}
   .day .d-focus{font-family:var(--display);font-weight:600;color:var(--gold-soft);font-size:1.02rem;margin-bottom:3px}
   .day .d-body ul{list-style:none}
-  .day .d-body li{font-size:.92rem;color:var(--parchment);padding-left:16px;position:relative;margin:3px 0}
+  .day .d-body li{font-size:1rem;color:var(--parchment);padding-left:16px;position:relative;margin:4px 0;line-height:1.5}
   .day .d-body li::before{content:"▸";position:absolute;left:0;color:var(--teal)}
   .day.exam{border-color:var(--rose);background:linear-gradient(135deg,rgba(232,116,107,.12),var(--ink-2))}
   .day.exam .dd{color:var(--rose)}
@@ -169,19 +169,54 @@
   .mcq{background:var(--ink-2);border:1px solid var(--line);border-radius:11px;margin-bottom:10px;overflow:hidden}
   .mcq-q{padding:14px 16px;cursor:pointer;display:flex;justify-content:space-between;gap:12px;align-items:flex-start;transition:.15s}
   .mcq-q:hover{background:var(--ink-3)}
-  .mcq-q .qt{flex:1;font-size:.97rem}
+  .mcq-q .qt{flex:1;font-size:1.04rem;line-height:1.5}
   .mcq-q .qt b{color:var(--teal);font-family:var(--mono);font-size:.8rem;margin-right:7px}
   .mcq-q .tap{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;white-space:nowrap;border:1px solid var(--line);padding:4px 8px;border-radius:7px;transition:.15s}
   .mcq.open .tap{background:var(--gold);color:var(--ink);border-color:var(--gold)}
   .mcq-a{max-height:0;overflow:hidden;transition:max-height .3s ease;background:var(--ink-3);border-top:0 solid var(--line)}
   .mcq.open .mcq-a{max-height:200px;border-top:1px solid var(--line)}
-  .mcq-a .inner{padding:13px 16px;font-size:.94rem}
-  .mcq-a .ans{color:var(--green);font-weight:600}
-  .mcq-a .why{color:var(--muted);font-size:.86rem;margin-top:4px}
+  .mcq-a .inner{padding:14px 16px;font-size:1.02rem}
+  .mcq-a .ans{color:var(--green);font-weight:600;font-size:1.05rem}
+  .mcq-a .why{color:var(--muted);font-size:.95rem;margin-top:5px;line-height:1.5}
   .subj-filter{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:18px}
   .fbtn{font-family:var(--mono);font-size:12px;padding:7px 13px;border-radius:8px;border:1px solid var(--line);background:var(--ink-2);color:var(--muted);cursor:pointer;transition:.15s}
   .fbtn:hover{color:var(--parchment)}
   .fbtn.on{background:var(--teal);color:var(--ink);border-color:var(--teal);font-weight:700}
+
+  /* ---------- MCQ QUIZ MODE ---------- */
+  .mcq-modes{display:flex;gap:8px;margin-bottom:16px}
+  .mbtn{font-family:var(--mono);font-size:13px;letter-spacing:.04em;padding:9px 18px;border-radius:9px;border:1px solid var(--line);background:var(--ink-2);color:var(--muted);cursor:pointer;transition:.15s}
+  .mbtn:hover{color:var(--parchment)}
+  .mbtn.on{background:var(--gold);color:var(--ink);border-color:var(--gold);font-weight:700}
+
+  .quiz{max-width:680px;margin:0 auto}
+  .quiz-bar{display:flex;justify-content:space-between;align-items:center;font-family:var(--mono);font-size:13px;color:var(--muted);margin-bottom:14px;letter-spacing:.04em}
+  .quiz-bar .sc .g{color:var(--green);font-weight:700} .quiz-bar .sc .b{color:var(--rose);font-weight:700}
+  .quiz-prog{height:6px;background:var(--ink-3);border-radius:99px;overflow:hidden;border:1px solid var(--line);margin-bottom:16px}
+  .quiz-prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--teal),var(--gold));transition:width .3s ease}
+  .quiz-card{background:var(--ink-2);border:1px solid var(--line);border-radius:16px;padding:30px 28px;min-height:240px;display:flex;flex-direction:column}
+  .quiz-card.glow{border-color:rgba(232,176,66,.4);box-shadow:0 0 0 1px rgba(232,176,66,.08),0 14px 40px -20px rgba(232,176,66,.3)}
+  .quiz-subj{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--teal);margin-bottom:12px}
+  .quiz-q{font-family:var(--display);font-size:1.5rem;font-weight:600;line-height:1.4;color:var(--parchment)}
+  .quiz-a{margin-top:18px;padding-top:16px;border-top:1px solid var(--line);animation:fade .25s ease}
+  .quiz-a .ans{color:var(--green);font-weight:700;font-size:1.3rem;font-family:var(--display)}
+  .quiz-a .why{color:var(--muted);font-size:1rem;margin-top:8px;line-height:1.55}
+  .quiz-actions{margin-top:auto;padding-top:24px}
+  .qbtn{font-family:var(--mono);font-size:14px;font-weight:700;letter-spacing:.03em;padding:14px 20px;border-radius:11px;border:1px solid var(--line);cursor:pointer;transition:.15s;width:100%}
+  .qbtn.reveal{background:var(--gold);color:var(--ink);border-color:var(--gold)}
+  .qbtn.reveal:hover{background:var(--gold-soft)}
+  .rate{display:flex;gap:11px}
+  .qbtn.got{background:rgba(111,207,143,.13);color:var(--green);border-color:rgba(111,207,143,.5)}
+  .qbtn.got:hover{background:var(--green);color:var(--ink)}
+  .qbtn.miss{background:rgba(232,116,107,.11);color:var(--rose);border-color:rgba(232,116,107,.5)}
+  .qbtn.miss:hover{background:var(--rose);color:var(--ink)}
+  .quiz-hint{text-align:center;font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:12px;letter-spacing:.05em}
+  .quiz-done{text-align:center;padding:34px 14px;background:var(--ink-2);border:1px solid var(--line);border-radius:16px}
+  .quiz-done .big{font-family:var(--display);font-weight:900;font-size:3rem;color:var(--gold);line-height:1}
+  .quiz-done .lab{font-family:var(--mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-top:6px}
+  .quiz-done .sub{color:var(--parchment);margin:14px 0 20px;font-size:1.02rem}
+  .quiz-done .qbtn{display:inline-block;width:auto;margin:5px}
+  .quiz-empty{text-align:center;color:var(--muted);padding:40px 16px;font-size:1.02rem}
 
   /* tables */
   .tbl{width:100%;border-collapse:collapse;font-size:.92rem;margin:8px 0}
@@ -205,8 +240,8 @@
   .res-list{list-style:none}
   .res-list li{padding:10px 0;border-bottom:1px dashed var(--line);display:flex;flex-direction:column;gap:2px}
   .res-list li:last-child{border-bottom:none}
-  .res-list .rt{font-size:.96rem}
-  .res-list .rd{color:var(--muted);font-size:.82rem}
+  .res-list .rt{font-size:1.04rem}
+  .res-list .rd{color:var(--muted);font-size:.9rem;line-height:1.5}
   .badge{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;padding:2px 7px;border-radius:5px;margin-left:7px;vertical-align:middle}
   .badge.off{background:rgba(111,207,143,.16);color:var(--green);border:1px solid rgba(111,207,143,.4)}
   .badge.free{background:rgba(78,197,176,.14);color:var(--teal);border:1px solid rgba(78,197,176,.35)}
@@ -455,7 +490,12 @@
 
 <section class="panel" id="mcq">
   <h2 class="sec"><span class="n">05</span>MCQ Bank — 110 high-frequency</h2>
-  <p class="sec-intro">Tap any question to reveal the answer. These cover the exact categories LAT examiners recycle — world capitals/currencies/organizations, Pakistan history &amp; geography, Islamiat, everyday science, and basic math. Filter by subject; treat each explanation line as the thing to memorize.</p>
+  <p class="sec-intro"><b>Study mode</b> — tap a question to reveal the answer. <b>Quiz me</b> — active recall: the answer hides, you grade yourself, and every miss is collected so you can re-drill only your weak spots. Filter by subject first; the quiz uses whatever's selected.</p>
+
+  <div class="mcq-modes" id="mcq-modes">
+    <button class="mbtn on" data-m="study">📖 Study (reveal)</button>
+    <button class="mbtn" data-m="quiz">⚡ Quiz me</button>
+  </div>
 
   <div class="subj-filter" id="mcq-filter">
     <button class="fbtn on" data-f="all">All (110)</button>
@@ -465,6 +505,8 @@
     <button class="fbtn" data-f="sci">Science</button>
     <button class="fbtn" data-f="math">Math</button>
   </div>
+
+  <div id="mcq-quiz" class="quiz" style="display:none"></div>
 
   <div id="mcq-list">
     <div class="mcq" data-s="gk"><div class="mcq-q"><div class="qt"><b>GK</b>Largest ocean on Earth?</div><div class="tap">reveal</div></div><div class="mcq-a"><div class="inner"><span class="ans">Pacific Ocean</span><div class="why">Largest &amp; deepest; smallest is the Arctic Ocean.</div></div></div></div>
@@ -966,6 +1008,123 @@
     });
   });
 
+  /* ---- MCQ QUIZ MODE (active recall) ---- */
+  var WKEY='lat2026_weak_v1';
+  var weak={};
+  try{ var wr=localStorage.getItem(WKEY); if(wr) weak=JSON.parse(wr)||{}; }catch(e){ weak={}; }
+  function saveWeak(){ try{ localStorage.setItem(WKEY, JSON.stringify(weak)); }catch(e){} }
+
+  // Build a data model from the existing MCQ DOM (no content duplication).
+  var allCards=[];
+  document.querySelectorAll('#mcq-list .mcq').forEach(function(m, i){
+    m.dataset.qid=String(i);
+    var qtEl=m.querySelector('.qt').cloneNode(true);
+    var subjB=qtEl.querySelector('b');
+    var subjLabel=subjB?subjB.textContent.trim():(m.dataset.s||'').toUpperCase();
+    if(subjB) subjB.remove();
+    var ansEl=m.querySelector('.ans'), whyEl=m.querySelector('.why');
+    allCards.push({
+      qid:i, s:m.dataset.s||'', subj:subjLabel,
+      q:qtEl.textContent.trim(),
+      ans:ansEl?ansEl.textContent.trim():'',
+      why:whyEl?whyEl.textContent.trim():''
+    });
+  });
+
+  var quizBox=document.getElementById('mcq-quiz');
+  var listBox=document.getElementById('mcq-list');
+  var mbtns=document.querySelectorAll('.mbtn');
+  var mode='study', deck=[], pos=0, got=0, missed=0;
+
+  function curFilter(){ var on=document.querySelector('.fbtn.on'); return on?on.dataset.f:'all'; }
+  function esc(s){ var d=document.createElement('div'); d.textContent=s||''; return d.innerHTML; }
+
+  function buildDeck(source){
+    var f=curFilter();
+    var pool=allCards.filter(function(c){
+      return source==='weak' ? !!weak[c.qid] : (f==='all'||c.s===f);
+    });
+    for(var i=pool.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=pool[i];pool[i]=pool[j];pool[j]=t; }
+    deck=pool; pos=0; got=0; missed=0;
+    renderCard();
+  }
+
+  function renderCard(){
+    if(deck.length===0){
+      quizBox.innerHTML='<div class="quiz-empty">Nothing to quiz in this set. Pick another subject — or you have no weak questions yet, which is a good problem to have.</div>';
+      return;
+    }
+    if(pos>=deck.length){ return renderDone(); }
+    var c=deck[pos], weakTotal=Object.keys(weak).length;
+    quizBox.innerHTML=
+      '<div class="quiz-bar"><span>Question '+(pos+1)+' / '+deck.length+'</span>'+
+      '<span class="sc"><span class="g">✓ '+got+'</span> &nbsp;<span class="b">✗ '+missed+'</span></span></div>'+
+      '<div class="quiz-prog"><i style="width:'+Math.round(pos/deck.length*100)+'%"></i></div>'+
+      '<div class="quiz-card" id="qc">'+
+        '<div class="quiz-subj">'+esc(c.subj)+(weak[c.qid]?' · ★ weak':'')+'</div>'+
+        '<div class="quiz-q">'+esc(c.q)+'</div>'+
+        '<div class="quiz-a" id="qa" style="display:none"><div class="ans">'+esc(c.ans)+'</div>'+(c.why?'<div class="why">'+esc(c.why)+'</div>':'')+'</div>'+
+        '<div class="quiz-actions">'+
+          '<button class="qbtn reveal" id="q-reveal">Reveal answer</button>'+
+          '<div class="rate" id="q-rate" style="display:none">'+
+            '<button class="qbtn miss" id="q-miss">✗ Missed</button>'+
+            '<button class="qbtn got" id="q-got">✓ Got it</button>'+
+          '</div>'+
+        '</div></div>'+
+      '<div class="quiz-hint">Space = reveal · 1 = missed · 2 = got it · '+weakTotal+' weak saved</div>';
+    document.getElementById('q-reveal').addEventListener('click', reveal);
+    document.getElementById('q-miss').addEventListener('click', function(){ rate(false); });
+    document.getElementById('q-got').addEventListener('click', function(){ rate(true); });
+  }
+
+  function reveal(){
+    var qa=document.getElementById('qa'); if(!qa) return;
+    qa.style.display='block';
+    document.getElementById('q-reveal').style.display='none';
+    document.getElementById('q-rate').style.display='flex';
+    document.getElementById('qc').classList.add('glow');
+  }
+
+  function rate(ok){
+    var c=deck[pos];
+    if(ok){ got++; if(weak[c.qid]){ delete weak[c.qid]; saveWeak(); } }
+    else { missed++; if(!weak[c.qid]){ weak[c.qid]=1; saveWeak(); } }
+    pos++; renderCard();
+  }
+
+  function renderDone(){
+    var total=got+missed, pctv=total?Math.round(got/total*100):0, weakTotal=Object.keys(weak).length;
+    quizBox.innerHTML=
+      '<div class="quiz-done">'+
+        '<div class="big">'+pctv+'%</div>'+
+        '<div class="lab">'+got+' / '+total+' correct</div>'+
+        '<div class="sub">'+(missed===0?'Clean run — every answer correct. ':missed+' to review. ')+
+          weakTotal+' weak question'+(weakTotal===1?'':'s')+' saved for re-drill.</div>'+
+        (weakTotal>0?'<button class="qbtn miss" id="q-redrill">Re-drill weak ('+weakTotal+')</button>':'')+
+        '<button class="qbtn reveal" id="q-restart">Restart this set</button>'+
+      '</div>';
+    if(weakTotal>0) document.getElementById('q-redrill').addEventListener('click', function(){ buildDeck('weak'); });
+    document.getElementById('q-restart').addEventListener('click', function(){ buildDeck('filter'); });
+  }
+
+  function setMode(m){
+    mode=m;
+    mbtns.forEach(function(x){ x.classList.toggle('on', x.dataset.m===m); });
+    if(m==='quiz'){ listBox.style.display='none'; quizBox.style.display='block'; buildDeck('filter'); }
+    else { quizBox.style.display='none'; listBox.style.display='block'; }
+  }
+  mbtns.forEach(function(b){ b.addEventListener('click', function(){ setMode(b.dataset.m); }); });
+  fbtns.forEach(function(b){ b.addEventListener('click', function(){ if(mode==='quiz') buildDeck('filter'); }); });
+
+  document.addEventListener('keydown', function(e){
+    if(mode!=='quiz') return;
+    if(!document.getElementById('mcq').classList.contains('active')) return;
+    var revealBtn=document.getElementById('q-reveal'), rateEl=document.getElementById('q-rate');
+    if(e.key===' ' && revealBtn && revealBtn.style.display!=='none'){ e.preventDefault(); reveal(); }
+    else if(e.key==='1' && rateEl && rateEl.style.display!=='none'){ document.getElementById('q-miss').click(); }
+    else if(e.key==='2' && rateEl && rateEl.style.display!=='none'){ document.getElementById('q-got').click(); }
+  });
+
   /* ---- PROGRESS + persistence (graceful if storage blocked) ---- */
   var KEY='lat2026_progress_v1';
   var store={};
@@ -991,8 +1150,9 @@
   refresh();
 
   document.getElementById('resetBtn').addEventListener('click', function(){
-    if(confirm('Clear all ticked progress in this browser?')){
+    if(confirm('Clear all ticked progress and quiz history in this browser?')){
       store={}; save();
+      weak={}; saveWeak();
       boxes.forEach(function(b){b.checked=false;});
       refresh();
     }
